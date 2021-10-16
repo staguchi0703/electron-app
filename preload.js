@@ -1,5 +1,5 @@
 const { ipcRenderer, contextBridge } = require('electron');
-
+const config = require('config');
 const zmq = require('zeromq');
 
 function addChildCreate(child) {
@@ -13,7 +13,8 @@ function send_msg() {
 
         //  Socket to talk to server
         const sock = new zmq.Request();
-        sock.connect('tcp://192.168.11.5:5556');
+        const server = config.get('server')
+        sock.connect('tcp://' + server.host + ':' + server.port);
 
         console.log('Sending Hello ');
         await sock.send('Hello');
