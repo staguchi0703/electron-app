@@ -1,0 +1,33 @@
+<h1 onContextMenu="contextMenu(event)">hello world</h1>
+
+<button id="btn" onclick="add_line()">
+ボタン2
+</button>
+
+<button id="btn3" onclick="doit()">
+    ボタン3
+    </button>
+    
+
+<p id="msg">hello world</p>
+
+<script>
+function add_line(){
+    window.myTestApi.send_msg()
+}
+
+function doit() {
+    console.log("empty func.")
+}
+
+
+function contextMenu(event) {
+    console.log("contextMenu event", event); //for debug
+    window.myTestApi.popupMenu(event);
+};
+
+window.myTestApi.on("popup-return", (event) => {
+        alert("右クリックからのアラート");
+    });
+
+</script>

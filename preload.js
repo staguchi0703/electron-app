@@ -1,6 +1,7 @@
-const { ipcRenderer, contextBridge, BrowserWindow, Menu } = require('electron');
+const { ipcRenderer, contextBridge } = require('electron');
 const config = require('config');
 const zmq = require('zeromq');
+
 
 function addChildCreate(child) {
     var elm = document.getElementById("msg");
@@ -34,10 +35,11 @@ function send_msg() {
 contextBridge.exposeInMainWorld(
     "myTestApi", {
     zmq: zmq,
-    ipcRenderer: ipcRenderer,
-    BrowserWindow: BrowserWindow,
-    Menu:Menu,
     send_msg: send_msg,
-    addChildCreate: addChildCreate
+    addChildCreate: addChildCreate,
+    popupMenu: (data) => ipcRenderer.invoke("popupMenu", data),
+    // メイン → レンダラー
+    on: (channel, callback) =>
+        ipcRenderer.on(channel, (event, argv) => callback(event, argv))
 }
 );

@@ -1,6 +1,6 @@
 {
     "server": {
-        "host": "localhost",
-        "port": 5555
+        "host": "192.168.11.5",
+        "port": 5556
     }
 }

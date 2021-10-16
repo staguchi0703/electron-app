@@ -29,10 +29,16 @@
     * app.whenReadyが準備できたら.thenでcreateWindowを実行する
       * 非同期実行でpromiseで動作する
     * `app.whenReady().then(createWindow)`
+    * promise実行時にcreateWindowに引数を与えるためにbindする
+      * `createWindow.bind(null, 引数)`
   * menueバーの設定
-    * `remote`をかますと実行できない。　禁止になった？？
+    * `remote`を使ったrendererプロセス側からの定義は実行できなくなっている
+    * 弄るならメインプロセス側で定義する
+      * ipcでrenderer側からトリガをかけて実行するしかない。
+      * 余り用途がなさそうなので実装の実験は行わない
+        * ipcRenderer -> ipcMain.handle()などを使う
   * コンテキストメニューの設定
-    * aa
+    * 
 
 
 ### preload
