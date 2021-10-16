@@ -1,4 +1,4 @@
-const { ipcRenderer, contextBridge } = require('electron');
+const { ipcRenderer, contextBridge, BrowserWindow, Menu } = require('electron');
 const config = require('config');
 const zmq = require('zeromq');
 
@@ -35,6 +35,8 @@ contextBridge.exposeInMainWorld(
     "myTestApi", {
     zmq: zmq,
     ipcRenderer: ipcRenderer,
+    BrowserWindow: BrowserWindow,
+    Menu:Menu,
     send_msg: send_msg,
     addChildCreate: addChildCreate
 }

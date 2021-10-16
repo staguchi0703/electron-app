@@ -29,6 +29,10 @@
     * app.whenReadyが準備できたら.thenでcreateWindowを実行する
       * 非同期実行でpromiseで動作する
     * `app.whenReady().then(createWindow)`
+  * menueバーの設定
+    * `remote`をかますと実行できない。　禁止になった？？
+  * コンテキストメニューの設定
+    * aa
 
 
 ### preload
