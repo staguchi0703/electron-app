@@ -68,28 +68,28 @@ function contextMenuMain() {
 
 
 function playWavFile() {
-    ipcMain.handle("playWavFile", () => {
+    ipcMain.handle("playWavFile", (event) => {
         const w = BrowserWindow.getFocusedWindow();
 
-        waveFilePath = dialog.showOpenDialogSync(w, {
+        let waveFilePath = dialog.showOpenDialogSync(w, {
             properties: ['openFile'],
             filters: [
                 {
                     name: 'Wav file',
                     extensions: ['wav']
                 }
-            ]
+            ],
+            defaultPath: "./"
         });
 
         if (waveFilePath != undefined){
             console.log(waveFilePath[0]);
-
+            return waveFilePath[0]
+        } else {
+            return "undefined"
         }
 
         
-
-        w.webContents.send("playWavFile-return");
-
     })
 }
 

@@ -8,7 +8,7 @@
     ボタン3
 </button>
 
-<button id="btn4" onclick="playWavFile()">
+<button id="btn4" onclick="playwavfile()">
     ボタン44
 </button>
     
@@ -34,12 +34,13 @@ window.myTestApi.on("popup-return", (event) => {
         alert("右クリックからのアラート");
     });
 
-function playWavFile() {
-    window.myTestApi.playWavFile()
+function playwavfile() {
+    window.myTestApi.playWavFile().then((result) => {
+        console.log(result);
+        alert(result)
+    })
+    
 }
 
-window.myTestApi.on("playWavFile-return", (event, argv) => {
-        alert("playWavFileがメインでじっこうされた" + event + argv);
-    });
 
 </script>
