@@ -1,6 +1,7 @@
 const { ipcRenderer, contextBridge } = require('electron');
 const config = require('config');
 const zmq = require('zeromq');
+const fs = require('fs');
 
 
 function addChildCreate(child) {
@@ -32,11 +33,14 @@ function send_msg() {
 }
 
 
+
+
 contextBridge.exposeInMainWorld(
     "myTestApi", {
     zmq: zmq,
     send_msg: send_msg,
     addChildCreate: addChildCreate,
+    playWavFile: ipcRenderer.invoke("playWavFile"),
     popupMenu: (data) => ipcRenderer.invoke("popupMenu", data),
     // メイン → レンダラー
     on: (channel, callback) =>

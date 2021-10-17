@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, MenuItem, ipcMain} = require('electron');
+const { app, BrowserWindow, Menu, MenuItem, ipcMain, dialog } = require('electron');
 const path = require('path');
 
 function createWindow(renderer_process) {
@@ -23,24 +23,24 @@ function createMenu() {
             submenu: [
                 {
                     label: 'open new window',
-                    click: () =>{
+                    click: () => {
                         console.log('New menu.');
                         app.whenReady().then(createWindow.bind(null, './renderer/newWindow.html'));
                     }
                 },
-                {role: 'close'},
-                {type: 'separator'},
-                {role: 'quit'}
+                { role: 'close' },
+                { type: 'separator' },
+                { role: 'quit' }
             ]
         },
         {
             label: 'debug',
             submenu: [
-                {role: 'toggleDevTools'},
-                {type: 'separator'},
-                {role: 'forceReload'},
-                {role: 'editMenu'},
-                {role: 'togglefullscreen'},
+                { role: 'toggleDevTools' },
+                { type: 'separator' },
+                { role: 'forceReload' },
+                { role: 'editMenu' },
+                { role: 'togglefullscreen' },
             ]
         }
     ];
@@ -50,8 +50,8 @@ function createMenu() {
 }
 
 
-function contextMenuMain(){
-    ipcMain.handle("popupMenu", (event) =>{
+function contextMenuMain() {
+    ipcMain.handle("popupMenu", (event) => {
         const menu = new Menu();
         menu.append(new MenuItem(
             {
@@ -62,15 +62,47 @@ function contextMenuMain(){
                 }
             })
         )
-        menu.popup({window: BrowserWindow.getFocusedWindow()})
+        menu.popup({ window: BrowserWindow.getFocusedWindow() })
     })
 }
+
+
+function playWavFile() {
+    ipcMain.handle("playWavFile", () => {
+        const w = BrowserWindow.getFocusedWindow();
+
+        waveFilePath = dialog.showOpenDialogSync(w, {
+            properties: ['openFile'],
+            filters: [
+                {
+                    name: 'Wav file',
+                    extensions: ['wav']
+                }
+            ]
+        });
+
+        if (waveFilePath != undefined){
+            console.log(waveFilePath[0]);
+
+        }
+
+        
+
+        w.webContents.send("playWavFile-return");
+
+    })
+}
+
+playWavFile()
+
+
 
 contextMenuMain();
 createMenu();
 app.whenReady().then(createWindow.bind(null, './renderer/index.html'));
 
-app.on('window-all-closed', ()=>{
+
+app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit()
     }

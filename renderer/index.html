@@ -6,7 +6,11 @@
 
 <button id="btn3" onclick="doit()">
     ボタン3
-    </button>
+</button>
+
+<button id="btn4" onclick="playWavFile()">
+    ボタン44
+</button>
     
 
 <p id="msg">hello world</p>
@@ -28,6 +32,14 @@ function contextMenu(event) {
 
 window.myTestApi.on("popup-return", (event) => {
         alert("右クリックからのアラート");
+    });
+
+function playWavFile() {
+    window.myTestApi.playWavFile()
+}
+
+window.myTestApi.on("playWavFile-return", (event, argv) => {
+        alert("playWavFileがメインでじっこうされた" + event + argv);
     });
 
 </script>
