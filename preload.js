@@ -40,7 +40,7 @@ contextBridge.exposeInMainWorld(
     zmq: zmq,
     send_msg: send_msg,
     addChildCreate: addChildCreate,
-    playWavFile: () =>  ipcRenderer.invoke("playWavFile"),
+    playWavFile: async () =>  await ipcRenderer.invoke("playWavFile"),
     popupMenu: (data) => ipcRenderer.invoke("popupMenu", data),
     // メイン → レンダラー
     on: (channel, callback) =>

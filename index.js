@@ -68,7 +68,7 @@ function contextMenuMain() {
 
 
 function playWavFile() {
-    ipcMain.handle("playWavFile", (event) => {
+    ipcMain.handle("playWavFile", async (event) => {
         const w = BrowserWindow.getFocusedWindow();
 
         let waveFilePath = dialog.showOpenDialogSync(w, {
@@ -81,6 +81,7 @@ function playWavFile() {
             ],
             defaultPath: "./"
         });
+        
 
         if (waveFilePath != undefined){
             console.log(waveFilePath[0]);
@@ -94,11 +95,9 @@ function playWavFile() {
 }
 
 playWavFile()
-
-
-
 contextMenuMain();
 createMenu();
+
 app.whenReady().then(createWindow.bind(null, './renderer/index.html'));
 
 
