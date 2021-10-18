@@ -2,6 +2,7 @@ const { ipcRenderer, contextBridge } = require('electron');
 const config = require('config');
 const zmq = require('zeromq');
 const fs = require('fs');
+const { Buffer } = require('buffer');
 
 
 function addChildCreate(child) {
@@ -32,15 +33,36 @@ function send_msg() {
     runClient();
 }
 
+async function subZmq() {
+    const sock = new zmq.Subscriber;
+
+    sock.connect("tcp://127.0.0.1:3000");
+    sock.subscribe("kitty cats");
+    console.log("Subscriber connected to port 3000");
 
 
+    for await (const [topic, message] of sock) {
+        console.log(
+            "received a message related to:",
+            topic.toString(),
+            "containing message:",
+            message.toString()
+            
+        );
+        var elm = document.getElementById("msg");
+        var child = document.createElement("div");
+        child.innerHTML = message.toString()
+        elm.appendChild(child);
+    };
+    
+}
 
 contextBridge.exposeInMainWorld(
     "myTestApi", {
-    zmq: zmq,
+    subZmq: subZmq,
     send_msg: send_msg,
     addChildCreate: addChildCreate,
-    playWavFile: async () =>  await ipcRenderer.invoke("playWavFile"),
+    playWavFile: async () => await ipcRenderer.invoke("playWavFile"),
     popupMenu: (data) => ipcRenderer.invoke("popupMenu", data),
     // メイン → レンダラー
     on: (channel, callback) =>

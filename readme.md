@@ -95,3 +95,6 @@ console.log(server.host)
 }
 ```
 
+## zeromq
+
+* v6.0を入れているのでgithubの最新を参照しないと動かない
