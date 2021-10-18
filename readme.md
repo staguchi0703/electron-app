@@ -98,3 +98,9 @@ console.log(server.host)
 ## zeromq
 
 * v6.0を入れているのでgithubの最新を参照しないと動かない
+* 非同期実行
+
+## TODO
+
+* 音再生
+* 画像表示
