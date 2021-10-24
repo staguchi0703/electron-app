@@ -1,7 +1,7 @@
 const { app, BrowserWindow, Menu, MenuItem, ipcMain, dialog } = require('electron');
 const path = require('path');
 
-function createWindow(renderer_process) {
+function createWindow(renderer_process: any) {
     let win = new BrowserWindow({
         width: 1200,
         height: 600,
@@ -51,7 +51,7 @@ function createMenu() {
 
 
 function contextMenuMain() {
-    ipcMain.handle("popupMenu", (event) => {
+    ipcMain.handle("popupMenu", (event: any) => {
         const menu = new Menu();
         menu.append(new MenuItem(
             {
@@ -68,7 +68,7 @@ function contextMenuMain() {
 
 
 function playWavFile() {
-    ipcMain.handle("playWavFile", async (event) => {
+    ipcMain.handle("playWavFile", async (event: any) => {
         const w = BrowserWindow.getFocusedWindow();
 
         let waveFilePath = dialog.showOpenDialogSync(w, {

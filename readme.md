@@ -104,3 +104,26 @@ console.log(server.host)
 
 * 音再生
 * 画像表示
+
+
+## typescriptを入れる
+
+* `npm install typescript --save-dev`
+* `npx tsc --init`
+
+```json
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["esnext","dom"],
+    "outDir": "build",
+    "rootDir": "src",
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
+```

@@ -2,11 +2,11 @@ const { ipcRenderer, contextBridge } = require('electron');
 const config = require('config');
 const zmq = require('zeromq');
 const fs = require('fs');
-const { Buffer } = require('buffer');
+// const { Buffer } = require('buffer');
 
 
-function addChildCreate(child) {
-    var elm = document.getElementById("msg");
+function addChildCreate(child: any) {
+    let elm = document.getElementById("msg")!;
     elm.appendChild(child)
 }
 
@@ -22,9 +22,9 @@ function send_msg() {
         console.log('Sending Hello ');
         await sock.send('Hello');
         const [result] = await sock.receive();
-        res = result.toString();
+        let res = result.toString();
         console.log('Received ', res);
-        var elm = document.getElementById("msg");
+        var elm = document.getElementById("msg")!;
         var child = document.createElement("div");
         child.innerHTML = res
         elm.appendChild(child);
@@ -47,14 +47,14 @@ async function subZmq() {
             topic.toString(),
             "containing message:",
             message.toString()
-            
+
         );
-        var elm = document.getElementById("msg");
+        var elm = document.getElementById("msg")!;
         var child = document.createElement("div");
         child.innerHTML = message.toString()
         elm.appendChild(child);
     };
-    
+
 }
 
 contextBridge.exposeInMainWorld(
@@ -63,9 +63,9 @@ contextBridge.exposeInMainWorld(
     send_msg: send_msg,
     addChildCreate: addChildCreate,
     playWavFile: async () => await ipcRenderer.invoke("playWavFile"),
-    popupMenu: (data) => ipcRenderer.invoke("popupMenu", data),
+    popupMenu: (data: any) => ipcRenderer.invoke("popupMenu", data),
     // メイン → レンダラー
-    on: (channel, callback) =>
-        ipcRenderer.on(channel, (event, argv) => callback(event, argv))
+    on: (channel: any, callback: any) =>
+        ipcRenderer.on(channel, (event: any, argv: any) => callback(event, argv))
 }
 );
