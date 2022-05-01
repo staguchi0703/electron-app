@@ -8,77 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
-const { ipcRenderer, contextBridge } = require('electron');
-const config = require('config');
-const zmq = require('zeromq');
-const fs = require('fs');
-// const { Buffer } = require('buffer');
-function addChildCreate(child) {
-    let elm = document.getElementById("msg");
-    elm.appendChild(child);
-}
-function send_msg() {
-    function runClient() {
-        return __awaiter(this, void 0, void 0, function* () {
-            console.log('Connecting to hello world server…');
-            //  Socket to talk to server
-            const sock = new zmq.Request();
-            const server = config.get('server');
-            sock.connect('tcp://' + server.host + ':' + server.port);
-            console.log('Sending Hello ');
-            yield sock.send('Hello');
-            const [result] = yield sock.receive();
-            let res = result.toString();
-            console.log('Received ', res);
-            var elm = document.getElementById("msg");
-            var child = document.createElement("div");
-            child.innerHTML = res;
-            elm.appendChild(child);
+Object.defineProperty(exports, "__esModule", { value: true });
+const console_1 = require("console");
+const electron_1 = require("electron");
+electron_1.contextBridge.exposeInMainWorld("myTestApi", {
+    createWindow: () => __awaiter(void 0, void 0, void 0, function* () {
+        return electron_1.ipcRenderer.invoke("createWindow").then(() => {
+            let elm = document.querySelector("#msg_any");
+            elm.textContent = "createWindw";
         });
-    }
-    runClient();
-}
-function subZmq() {
-    var e_1, _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const sock = new zmq.Subscriber;
-        sock.connect("tcp://127.0.0.1:3000");
-        sock.subscribe("kitty cats");
-        console.log("Subscriber connected to port 3000");
-        try {
-            for (var sock_1 = __asyncValues(sock), sock_1_1; sock_1_1 = yield sock_1.next(), !sock_1_1.done;) {
-                const [topic, message] = sock_1_1.value;
-                console.log("received a message related to:", topic.toString(), "containing message:", message.toString());
-                var elm = document.getElementById("msg");
-                var child = document.createElement("div");
-                child.innerHTML = message.toString();
-                elm.appendChild(child);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (sock_1_1 && !sock_1_1.done && (_a = sock_1.return)) yield _a.call(sock_1);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        ;
-    });
-}
-contextBridge.exposeInMainWorld("myTestApi", {
-    subZmq: subZmq,
-    send_msg: send_msg,
-    addChildCreate: addChildCreate,
-    playWavFile: () => __awaiter(void 0, void 0, void 0, function* () { return yield ipcRenderer.invoke("playWavFile"); }),
-    popupMenu: (data) => ipcRenderer.invoke("popupMenu", data),
+    }),
+    ipcRenderer: electron_1.ipcRenderer,
     // メイン → レンダラー
-    on: (channel, callback) => ipcRenderer.on(channel, (event, argv) => callback(event, argv))
+    on: (channel, callback) => electron_1.ipcRenderer.on(channel, (event, argv) => callback(event, argv))
 });
-//# sourceMappingURL=preload.js.map
+const _now = (0, console_1.time)();
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicHJlbG9hZC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy9wcmVsb2FkLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7O0FBQUEscUNBQStCO0FBQy9CLHVDQUFzRDtBQUV0RCx3QkFBYSxDQUFDLGlCQUFpQixDQUMzQixXQUFXLEVBQUU7SUFDVCxZQUFZLEVBQUUsR0FBUSxFQUFFO1FBQUMsT0FBQSxzQkFBVyxDQUFDLE1BQU0sQ0FBQyxjQUFjLENBQUMsQ0FBQyxJQUFJLENBQUMsR0FBRSxFQUFFO1lBQ2pFLElBQUksR0FBRyxHQUFHLFFBQVEsQ0FBQyxhQUFhLENBQUMsVUFBVSxDQUFFLENBQUE7WUFDN0MsR0FBRyxDQUFDLFdBQVcsR0FBRyxhQUFhLENBQUM7UUFDcEMsQ0FBQyxDQUFDLENBQUE7TUFBQTtJQUNGLFdBQVcsRUFBQyxzQkFBVztJQUN2QixjQUFjO0lBQ2QsRUFBRSxFQUFFLENBQUMsT0FBWSxFQUFFLFFBQWEsRUFBRSxFQUFFLENBQ2hDLHNCQUFXLENBQUMsRUFBRSxDQUFDLE9BQU8sRUFBRSxDQUFDLEtBQVUsRUFBRSxJQUFTLEVBQUUsRUFBRSxDQUFDLFFBQVEsQ0FBQyxLQUFLLEVBQUUsSUFBSSxDQUFDLENBQUM7Q0FDaEYsQ0FFSixDQUFDO0FBRUYsTUFBTSxJQUFJLEdBQUcsSUFBQSxjQUFJLEdBQUUsQ0FBQyJ9

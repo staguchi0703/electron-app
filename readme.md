@@ -3,13 +3,14 @@
 ## 環境構築
 
 * electron
-  * `npm install electron --save`
+  * `npm install --save-dev electron typescript ts-node @types/node`
 * zeromq
   * `npm install zeromq --save`
 
 ## electronの実行
 
-* `/node_modules/electron/dist/electron.exe .`
+* `npm start`
+  * `tsc && electron .`
 
 ## electronのbuild
 
@@ -18,32 +19,31 @@
 
 ### main proccess
 
-* index.js
+* index.ts
   * renderer processでnodeモジュールを使うための設定
     * nodeintegrationを使用してrenderer processがnodeモジュールを使う機能が禁止された
     * preloadプロセスを立ててそこでexportしたものを、renderer processで使うことができる
     * webPrefarencesにpreloadをキー、preload.jsのパスをバリューにしたjsonを渡す
-  * renderer process
-    * `BrowserWindow`のインスタンスにloadFileでhtmlを食わせる
-  * ウインドウの起動
-    * app.whenReadyが準備できたら.thenでcreateWindowを実行する
-      * 非同期実行でpromiseで動作する
-    * `app.whenReady().then(createWindow)`
-    * promise実行時にcreateWindowに引数を与えるためにbindする
-      * `createWindow.bind(null, 引数)`
+  * preloadからmain processの関数を使う方法
+    * `ipcMain.handle`に定義する
+
+    ```ts: index.ts
+    ipcMain.handle("ivent名称", (event, 引数1...) => {
+        処理内容;
+    })
+    ```
+
   * menueバーの設定
-    * `remote`を使ったrendererプロセス側からの定義は実行できなくなっている
     * 弄るならメインプロセス側で定義する
       * ipcでrenderer側からトリガをかけて実行するしかない。
-      * 余り用途がなさそうなので実装の実験は行わない
-        * ipcRenderer -> ipcMain.handle()などを使う
+        * ipcRenderer -> ipcMain.handle()を使う
   * コンテキストメニューの設定
     * 
 
 
 ### preload
 
-* 普通にnodeモジュールを呼び出してよい
+* 普通にnodeモジュールを呼び出して使える
 * renderer processにモジュールを渡すためには、electronの`contextBridge`のexposeInMainWorldを使用する
 * モジュールやpreload内で定義した関数をjsonにして渡す
   * `contextBridge.exposeInMainWorld("モジュールセット名称" , 定義json)`

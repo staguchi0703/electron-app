@@ -1,0 +1,4252 @@
+﻿Electronではじめるデスクトップアプリケーション開発
+
+
+
+
+掲載リスト
+
+
+
+
+リスト1-1
+{
+  "name": "sample_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
+
+
+
+
+リスト1-2
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" 
+      content="width=device-width, initial-scale=1.0">
+    <title>Sample App</title>
+  </head>
+  <body>
+    <h1>Hello world</h1>
+    <p>This is sample application!</p>
+  </body>
+</html>
+
+
+
+
+リスト1-3
+const { app, BrowserWindow } = require('electron');
+
+
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 400,
+    height: 200,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  win.loadFile('index.html');
+}
+
+
+app.whenReady().then(createWindow);
+
+
+
+
+リスト2-1
+const { app, BrowserWindow } = require('electron');
+
+
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 400,
+    height: 200,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  win.loadFile('index.html'); // ☆
+}
+
+
+app.whenReady().then(createWindow);
+
+
+
+
+リスト2-2
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+
+
+
+リスト2-3
+win.loadURL('https:///www.tuyano.com');
+
+
+
+
+リスト2-4
+let win = new BrowserWindow({
+  width: 800,
+  height: 500,
+  backgroundColor: '#660066', // 追記
+  webPreferences: {
+    nodeIntegration: true
+  }
+});
+
+
+
+
+リスト2-5
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+  <title>Sample App</title>
+</head>
+<body>
+  <h1>Hello world</h1>
+  <p id="msg">This is sample application!</p>
+  <div>
+    <button onclick="doAction();">CLICK</button>
+  </div>
+</body>
+<script>
+var counter = 0;
+function doAction(){
+  let p = document.querySelector("#msg");
+  p.textContent = "count: " + ++counter;
+}
+</script>
+</html>
+
+
+
+
+リスト2-6
+const { app, BrowserWindow } = require('electron');
+
+
+const html = '<html><head>'
+  + '<title>HTML STRING</title>'
+  + '</head><body>'
+  + '<h1>HTML STRING</h1>'
+  + '<p>This is string content.</p>'
+  + '</body></html>';
+
+
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 400,
+    height: 200,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  win.loadURL('data:text/html;charset=utf-8,' + html);
+}
+
+
+app.whenReady().then(createWindow)
+
+
+
+
+リスト2-7
+const { app, BrowserWindow } = require('electron');
+
+
+const html = '<html><head>'
+  + ……中略……
+  + '</body></html>';
+
+
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 400,
+    height: 300,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  win.loadFile('index.html');
+
+
+  let child = new BrowserWindow({
+    width: 350,
+    height: 200,
+    parent: win, // ☆
+    webPreferences: {
+      nodeIntegration: true
+    }
+  });
+  child.loadURL('data:text/html;charset=utf-8,' + html);
+}
+
+
+app.whenReady().then(createWindow)
+
+
+
+
+リスト2-8
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+  <title>Sample App</title>
+</head>
+<body>
+  <h1>Sub Window</h1>
+  <p id="msg">This is sample application!</p>
+  <div>
+    <button onclick="doAction();">CLICK</button>
+  </div>
+</body>
+<script>
+function doAction(){
+  window.close();
+}
+</script>
+</html>
+
+
+
+
+リスト2-9
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 500,
+    height: 400
+  });
+  win.loadFile('index.html');
+
+
+  let child = new BrowserWindow({
+    width: 350,
+    height: 200,
+    parent: win, // ☆
+    frame:false, // ☆
+    modal: true // ☆
+  });
+  child.loadFile('sub.html');
+}
+
+
+
+
+リスト2-10
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 500,
+    height: 400,
+    
+  });
+  win.loadFile('index.html');
+
+
+  let child1 = new BrowserWindow({
+    width: 350,
+    height: 250,
+    parent: win,
+    frame: false, // ☆
+    transparent: true // ☆
+  });
+  child1.loadFile('sub.html');
+
+
+  let child2 = new BrowserWindow({
+    width: 350,
+    height: 250,
+    parent: win,
+    opacity: 0.5 // ☆
+  });
+  child2.loadFile('sub.html');
+}
+
+
+
+
+リスト2-11
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 500,
+    height: 300
+  });
+  win.loadFile('index.html');
+  win.webContents.openDevTools(); // ☆
+}
+
+
+
+
+リスト2-12
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      },
+      "args" : ["."],
+      "outputCapture": "std"
+    }
+  ]
+}
+
+
+
+
+リスト2-13
+app.on('will-finish-launching', ()=> {
+  console.log('will-finish-launching');
+});
+
+
+
+
+リスト2-14
+function createWindow () {
+  let win1 = new BrowserWindow({
+    width: 400,
+    height: 200
+  });
+  win1.loadFile('index.html');
+  let win2 = new BrowserWindow({
+    width: 400,
+    height: 200
+  });
+  win2.loadFile('index.html');
+}
+
+
+app.on('browser-window-focus', (event)=> {
+  console.log('browser-window-focus: '
+    + event.sender.id);
+});
+
+
+app.on('browser-window-blur', (event)=> {
+  console.log('browser-window-blur: '
+    + event.sender.id);
+});
+
+
+
+
+リスト2-15
+app.on('browser-window-created', ()=> {
+  console.log('browser-window-created');
+});
+
+
+app.on('web-contents-created', ()=> {
+  console.log('web-contents-created');
+});
+
+
+
+
+リスト2-16
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    show: false
+  });
+  win.loadURL('http://www.tuyano.com');
+  win.on('ready-to-show', ()=>{
+    win.show();
+  });
+  win.on('show', ()=>{
+    console.log('show browser-window.');
+  });
+}
+
+
+
+
+リスト2-17
+function createWindow () {
+  var fn = (event)=> {
+    console.log('focus: ' + event.sender.id);
+  };
+  let win1 = new BrowserWindow({
+    width: 400,
+    height: 200
+  });
+  win1.loadFile('index.html');
+  win1.on('focus', fn);
+  let win2 = new BrowserWindow({
+    width: 400,
+    height: 200
+  });
+  win2.loadFile('index.html');
+  win2.on('focus',fn);
+}
+
+
+
+
+リスト2-18
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 400,
+    height: 250
+  });
+  win.loadFile('index.html');
+
+
+  win.flag = true;
+  win.on('focus',(event)=> {
+    event.sender.flag = !event.sender.flag;
+    console.log('flag: ' + event.sender.flag);
+  });
+  win.on('will-move', (event)=> {
+    if (event.sender.flag) {
+      event.preventDefault();
+    }
+  });
+  win.on('move', (event)=> {
+    console.log(event.sender.getPosition());
+  });
+  win.on('will-resize', (event)=> {
+    if (!event.sender.flag) {
+      event.preventDefault();
+    }
+  });
+  win.on('resize', (event)=> {
+    console.log(event.sender.getSize());
+  });
+}
+
+
+
+
+リスト2-19
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 400,
+    height: 250
+  });
+  win.loadFile('index.html');
+
+
+  win.on('focus',(event)=> {
+    var p = event.sender.getPosition();
+    var s = event.sender.getSize();
+    p[0] += 10;
+    p[1] += 10;
+    s[0] += 10;
+    s[1] += 10;
+    event.sender.setPosition(p[0], p[1], true);
+    event.sender.setSize(s[0], s[1], true);
+    var b = event.sender.getBounds();
+    console.log('new bounds: ' + '['
+      + b.x + ', ' + b.y + ', '
+      + b.width + ', ' + b.height + ']');
+  });
+}
+
+
+
+
+リスト2-20
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 400,
+    height: 250
+  });
+  let webc = win.webContents;
+  webc.on('new-window', ()=>{
+    console.log('new-window.');
+  });
+  webc.on('did-finish-load', ()=>{
+    console.log('did-finish-load.');
+  });
+  webc.on('dom-ready', ()=>{
+    console.log('dom-ready.');
+  });
+  webc.on('will-navigate', ()=>{
+    console.log('will-navigate.');
+  });
+  webc.on('did-navigate', ()=>{
+    console.log('did-navigate.');
+  });
+
+
+  win.loadFile('index.html');
+}
+
+
+
+
+リスト2-21
+// const { app, BrowserView, BrowserWindow } = require('electron');
+
+
+function createWindow () {
+  win = new BrowserWindow({
+    width: 600,
+    height: 400
+  });
+  win.loadFile('index.html');
+
+
+  const view = new BrowserView();
+  view.webContents.loadURL('https://electronjs.org');
+
+
+  win.setBrowserView(view);
+  view.setBounds({ x: 200, y: 150, 
+      width: 300, height: 150 });
+}
+
+
+
+
+リスト3-1
+const { app, Menu, MenuItem, BrowserWindow } = require('electron');
+
+
+function createWindow () {
+  win = new BrowserWindow({
+    width: 400,
+    height: 200
+  });
+}
+
+
+function createMenu () {
+  let menu = new Menu();
+
+
+  let file = new MenuItem({
+    label: 'File',
+    submenu: [
+      new MenuItem({ label: 'New'}),
+      new MenuItem({ label: 'File'}),
+      new MenuItem({ label: 'Quit'})
+    ]
+  });
+  menu.append(file);
+
+
+  let edit = new MenuItem({
+    label: 'Edit',
+    submenu: [
+      new MenuItem({ label: 'Cut'}),
+      new MenuItem({ label: 'Copy'}),
+      new MenuItem({ label: 'Paste'})
+    ]
+  });
+  menu.append(edit);
+
+
+  Menu.setApplicationMenu(menu);
+}
+
+
+createMenu();
+app.whenReady().then(createWindow);
+
+
+
+
+リスト3-2
+function createMenu () {
+  let menu_temp = [
+    {
+      label: 'File',
+      submenu: [
+        {label: 'New'},
+        {label: 'File'},
+        {type: 'separator'},
+        {label: 'Quit'}
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        {label: 'Cut'},
+        {label: 'Copy'},
+        {label: 'Paste'}
+      ]
+    }
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  
+  Menu.setApplicationMenu(menu);
+}
+
+
+
+
+リスト3-3
+function createMenu () {
+  let menu_temp = [
+    {
+      label: 'File',
+      submenu: [
+        {label: 'New', click: ()=>{
+          console.log('New menu.');
+          createWindow();
+        }},
+        {type: 'separator'},
+        {label: 'Quit', click: ()=>{
+          console.log('Quit menu.');
+          app.quit();
+        }}
+      ]
+    }
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  
+  Menu.setApplicationMenu(menu);
+}
+
+
+
+
+リスト3-4
+<body>
+  <h1>Hello world</h1>
+  <p id="msg">This is sample application!</p>
+  <div>
+    <textarea></textarea>
+  </div>
+</body>
+
+
+
+
+リスト3-5-1――createWindow関数
+function createWindow () {
+  win = new BrowserWindow({
+    width: 400,
+    height: 300
+  });
+  win.loadFile('index.html');
+}
+
+
+
+
+リスト3-5-2――createMenu関数
+function createMenu () {
+  let menu_temp = [
+    {
+      label: 'File',
+      submenu: [
+        {label: 'New', click: ()=>{
+          console.log('New menu.');
+          createWindow();
+        }},
+        {label: 'File', click: ()=>{
+          console.log('File menu.');
+          createWindow();
+        }},
+        {type: 'separator'},
+        {role: 'quit'}
+      ]
+    },
+    {
+      label: 'Edit',
+      submenu: [
+        {role: 'cut'},
+        {role: 'copy'},
+        {role: 'paste'}
+      ]
+    }
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  
+  Menu.setApplicationMenu(menu);
+}
+
+
+
+
+リスト3-6
+function createMenu() {
+  let menu_temp = [
+    {
+      label: 'File',
+      submenu: [
+        {label: 'New', click: ()=>{
+          console.log('New menu.');
+          createWindow();
+        }},
+        {label: 'File', click: ()=>{
+          console.log('File menu.');
+          createWindow();
+        }},
+        {role: 'close'},
+        {type: 'separator'},
+        {role: 'quit'}
+      ]
+    },
+    {role: 'editMenu'},
+    {role: 'viewMenu'},
+    {role:'windowMenu'},
+    {label: 'Help', submenu: [
+      {role: 'about'},
+      {type: 'separator'},
+      {role: 'reload'},
+      {role: 'zoomIn'},
+      {role: 'zoomOut'}
+    ]}
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  
+  Menu.setApplicationMenu(menu);
+}
+
+
+
+
+リスト3-7
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" >
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+
+
+
+リスト3-8
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <title>Sample App</title>
+</head>
+<body>
+  <nav class="navbar bg-primary mb-4">
+    <h1 class="display-4 text-light">Sample-app</h1>
+  </nav>
+  <div class="container mt-4">
+    <p>This is sample application!</p>
+  </div>
+</body>
+</html>
+
+
+
+
+リスト3-9
+<div class="container">
+  <h6 class="h1">見出し１</h1>
+  <h5 class="h2">見出し２</h2>
+  <h4 class="h3">見出し３</h3>
+  <h3 class="h4">見出し４</h4>
+  <h2 class="h5">見出し５</h5>
+  <h1 class="h6">見出し６</h6>
+</div>
+
+
+
+
+リスト3-10
+<div class="container">
+  <button class="btn btn-primary">primary</button>
+  <button class="btn btn-secondary">secondary</button>
+  <button class="btn btn-success">success</button>
+  <button class="btn btn-danger">danger</button>
+  <button class="btn btn-warning">warning</button>
+  <button class="btn btn-info">info</button>
+  <button class="btn btn-light">light</button>
+  <button class="btn btn-dark">dark</button>
+</div>
+
+
+
+
+リスト3-11
+<div class="container">
+  <form>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name">
+    </div>
+    <div class="form-group">
+      <label for="pass">Password</label>
+      <input type="password" class="form-control" id="pass">
+    </div>
+    <div class="form-group">
+      <input type="submit" class="btn btn-primary" value="送信">
+    </div>
+  </form>
+</div>
+
+
+
+
+リスト3-12
+<div class="container">
+  <form>
+    <div class="form-group">
+      <input type="checkbox" class="form-check-input" id="ch1">
+      <label for="ch1">Check box</label>
+    </div>
+    <div class="form-group">
+      <input type="radio" class="form-check-input" id="r1">
+      <label for="r1">radio button 1</label>
+    </div>
+    <div class="form-group">
+      <input type="radio" class="form-check-input" id="r2">
+      <label for="r2">radio button 2</label>
+    </div>
+    <div class="form-group">
+      <label for="sel">Select </label>
+      <select class="form-control" id="sel">
+        <option>item A</option>
+        <option>item B</option>
+        <option>item C</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <input type="submit" class="btn btn-primary" value="送信">
+    </div>
+  </form>
+</div>
+
+
+
+
+リスト3-13
+<div class="container">
+  <ul class="list-group">
+    <li class="list-group-item active">Windows 10</li>
+    <li class="list-group-item">mac OS</li>
+    <li class="list-group-item disabled">Chromebook</li>
+    <li class="list-group-item list-group-item-action">Android</li>
+    <li class="list-group-item list-group-item-action">iPhone</li>
+  </ul>
+</div>
+
+
+
+
+リスト3-14
+<div class="container">
+  <table class="table">
+    <thead>
+      <th>Name</th>
+      <th>Mail</th>
+      <th>Tel</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>YAMADA-Taro</td>
+        <td>taro@yamada.kun</td>
+        <td>090-999-999</td>
+      </tr>
+      <tr>
+        <td>TANAKA-Hanako</td>
+        <td>hanako@flower.san</td>
+        <td>080-888-888</td>
+      </tr>
+      <tr>
+        <td>NAKANO-Sachiko</td>
+        <td>sachico@happy.chan</td>
+        <td>070-777-777</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+リスト3-15
+<div class="container">
+  <table class="table table-striped table-bordered table-hover">
+    <thead class="thead-dark">
+
+
+
+
+リスト3-16
+<div class="container">
+  <div class="alert alert-primary" role="alert">
+    Primary alert!
+  </div>
+  <div class="alert alert-secondary" role="alert">
+    Secondary alert!
+  </div>
+  <div class="alert alert-success" role="alert">
+    Success alert!
+  </div>
+  <div class="alert alert-danger" role="alert">
+    Danger alert!
+  </div>
+  <div class="alert alert-warning" role="alert">
+    Warning alert!
+  </div>
+  <div class="alert alert-info" role="alert">
+    Info alert!
+  </div>
+  <div class="alert alert-light" role="alert">
+    Light alert!
+  </div>
+  <div class="alert alert-dark" role="alert">
+    Dark alert!
+  </div>
+</div>
+
+
+
+
+リスト3-17
+<div class="container">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    ※これは、クローズボタンで閉じられるアラートです。
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+</div>
+
+
+
+
+リスト3-18
+<div class="container">
+  <div class="card" style="width: 20rem;">
+    <div class="card-body">
+      <h5 class="card-title">Sample Card</h5>
+      <h6 class="card-subtitle mb-3 text-muted">This is sample card.</h6>
+      <p class="card-text">これは、サンプルで用意したカードです。
+      コンテンツをカードの形でまとめて表示できます。</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト3-19
+<div class="container">
+  <div class="card" style="width: 20rem;">
+    <div class="card-header">
+      <h5 class="card-title">Sample Card</h5>
+    </div>
+    <div class="card-body">
+      <h6 class="card-subtitle mb-3">This is sample card.</h6>
+      <p class="card-text">これは、サンプルで用意したカードです。
+      コンテンツをカードの形でまとめて表示できます。</p>
+    </div>
+    <div class="card-footer text-muted">
+      by SYODA-Tuyano.
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト3-20
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-3">Jumbotron!</h1>
+    <p class="lead">This is sample Jumbotron panel.</p>
+    <hr>
+    <p>これは、サンプルで作成したジャンボトロンのパネルです。
+      大きく目立つ表示が必要な場合に用いられます。</p>
+  </div>
+</div>
+
+
+
+
+リスト3-21
+<div class="container">
+  <p>
+    <a class="btn btn-primary" data-toggle="collapse"
+      href="#coll-1" role="button">
+      Collapse!
+    </a>
+  </p>
+  <div class="collapse" id="coll-1">
+    <div class="card card-body">
+      これは、コラプスによる表示のサンプルです。
+      ボタンクリックで、表示をON/OFFできます。
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト3-22
+<div class="container">
+  <div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" 
+      id="btn1" data-toggle="dropdown">
+      Dropdown!
+    </button>
+    <div class="dropdown-menu" aria-labelledby="btn1">
+      <a class="dropdown-item" href="#">First item</a>
+      <a class="dropdown-item" href="#">Second item</a>
+      <a class="dropdown-item" href="#">Third item</a>
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト3-23
+<div class="container">
+  <button class="btn btn-lg btn-secondary" data-toggle="popover"
+    title="Popoverについて" data-placement="bottom"
+    data-content="これはPopoverで表示されるコンテンツです。">
+    Popover!
+  </button>
+  <p class="mt-3">ボタンの下にコンテンツを表示させてみます。
+    ポップーバーはコンテンツの上に表示されます。</p>
+  <script>
+  $(function () {
+    $('[data-toggle="popover"]').popover()
+  })
+  </script>
+</div>
+
+
+
+
+リスト3-24
+<div class="container">
+  <button type="button" class="btn btn-primary" 
+    data-toggle="modal" data-target="#dlog">
+    Modal dialog!
+  </button>
+  <div class="modal fade" id="dlog" tabindex="-1" 
+    role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="dlog">ダイアログ</h5>
+        </div>
+        <div class="modal-body">
+          これは、表示したモーダルダイアログのコンテンツです。
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" onclick="ok();">
+            OK</button>
+          <button class="btn btn-secondary"
+            data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  function ok() {
+    alert("ok");
+    $('#dlog').modal('hide');
+  }
+  </script>
+</div>
+
+
+
+
+リスト3-25
+<div class="container">
+  <div class="row p-3">
+    <div class="col-6 p-3 bg-primary">
+      First content.
+    </div>
+    <div class="col-3 p-3 bg-secondary">
+      Second content.
+    </div>
+    <div class="col-2 p-3 bg-warning">
+      Third content.
+    </div>
+    <div class="col-1 p-3 bg-info">
+      Fourth content.
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト3-26
+<div class="container">
+  <div class="row">
+    <div class="col-lg-5 col-md-12 col-sm-12 p-3 bg-primary">
+      First content.
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 p-3 bg-secondary">
+      Second content.
+    </div>
+    <div class="col-lg-2 col-md-3 col-sm-6 p-3 bg-warning">
+      Third content.
+    </div>
+    <div class="col-lg-2 col-md-3 col-sm-6 p-3 bg-info">
+      Fourth content.
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト3-27
+<div class="container">
+  <div class="row p-3">
+    <div class="col-12 col-md-12 col-lg-2 p-3 card">
+      <ul class="list-group">
+        <li class="list-group-item active">Menu</li>
+        <li class="list-group-item">menu-1</li>
+        <li class="list-group-item">menu-2</li>
+        <li class="list-group-item">menu-3</li>
+      </ul>
+    </div>
+    <div class="col-12 col-md-9 col-lg-8 p-3 card">
+      <h2>Content area</h2>
+      <p>これは、コンテンツの表示エリアです。</p>
+      <table class="table">
+        <thead>
+          <th>id</th>
+          <th>item A</th>
+          <th>item B</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>first item</td>
+            <td>最初の項目</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>second item</td>
+            <td>２番目の項目</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>last item</td>
+            <td>最後の項目</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-12 col-md-3 col-lg-2 p-3 card">
+      <h5>Sidebar area</h5>
+      <p>This is side bar area.</p>
+      <p>これは、サイドバー表示のためのエリアです。</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト4-1
+const { app, Menu, BrowserWindow } = require('electron');
+const path = require('path');
+
+
+function createWindow () {
+  win = new BrowserWindow({
+    width: 400,
+    height: 300,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+    }
+  });
+  win.loadFile('index.html');
+}
+
+
+function createMenu() {……変更なし ……}
+
+
+createMenu();
+app.whenReady().then(createWindow);
+
+
+
+
+リスト4-2
+<body>
+  <nav class="navbar bg-primary mb-4">
+    <h1 class="display-4 text-light">Sample-app</h1>
+  </nav>
+  <div class="container">
+    <p id="msg">please click button.</p>
+    <button class="btn btn-primary"onclick="doit()">
+      Click
+    </button>
+  </div>
+  <script>
+  const { remote } = require('electron');
+  const { BrowserWindow } = remote;
+
+
+  function doit() {
+    let win = new BrowserWindow({
+      width: 400,
+      height: 300,
+      webPreferences: {
+        nodeIntegration: true,
+        enableRemoteModule: true
+      }
+    });
+    win.loadFile('index.html');
+    document.querySelector('#msg').textContent
+      = 'Create new window!';
+  }
+  </script>
+</body>
+
+
+
+
+リスト4-3
+const { remote } = require('electron');
+
+
+window.remote = remote;
+
+
+
+
+リスト4-4
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <title>Sample App</title>
+</head>
+
+
+<body>
+  <nav class="navbar bg-primary mb-4">
+    <h1 class="display-4 text-light">Sample-app</h1>
+  </nav>
+  <div class="container">
+    <p id="msg">please click button.</p>
+    <button class="btn btn-primary"onclick="doit()">
+      Click
+    </button>
+  </div>
+
+
+  <script>
+  const BrowserWindow = window.remote.BrowserWindow;
+
+
+  function doit() {
+    let win = new BrowserWindow({
+      width: 400,
+      height: 300,
+    });
+    win.loadFile('index.html');
+    document.querySelector('#msg').textContent
+      = 'Create new window!';
+  }
+  </script>
+
+
+</body>
+</html>
+
+
+
+
+リスト4-5
+function createWindow () {
+  win = new BrowserWindow({
+    width: 400,
+    height: 300,
+    webPreferences: {
+      enableRemoteModule: true,
+      preload: path.join(app.getAppPath(), 'preload.js')
+    }
+  });
+  win.loadFile('index.html');
+}
+
+
+
+
+リスト4-6
+<script>
+const BrowserWindow = window.remote.BrowserWindow;
+
+
+function doit() {
+  let win = new BrowserWindow({
+    width: 400,
+    height: 300,
+  });
+  win.loadFile('index.html');
+  
+  let n = 100;
+  let res = '';
+  let wins = BrowserWindow.getAllWindows();
+  for (let w in wins) {
+    res += '[' + wins[w].id + ']<br>';
+    wins[w].setPosition(n, n);
+    n += 50;
+  }
+  document.querySelector('#msg').innerHTML = res;
+}
+</script>
+
+
+
+
+リスト4-7
+function doit() {
+  let win = remote.getCurrentWindow();
+  win.webContents.loadURL('https://electronjs.org');
+}
+
+
+
+
+リスト4-8
+<script>
+const BrowserWindow = window.remote.BrowserWindow;
+const Menu = window.remote.Menu;
+
+
+function doit() {
+  let menu_temp = [
+    {
+      label: 'New Menu',
+      submenu: [
+        {label: 'New', click: ()=>{
+          console.log('New menu.');
+          createWindow();
+        }},
+        {role: 'close'},
+        {type: 'separator'},
+        {role: 'quit'}
+      ]
+    }
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  Menu.setApplicationMenu(menu);
+  alert('change menubar.');
+}
+</script>
+
+
+
+
+リスト4-9
+function createMenu() {
+  let menu_temp = [
+    {
+      label: 'File',
+      submenu: [
+        {label: 'New', click: ()=>{
+          console.log('New menu.');
+          createWindow();
+        }},
+        {label: 'Hello', click: ()=>{
+          console.log('Hello menu.');
+          const w = BrowserWindow.getFocusedWindow();
+          w.webContents.executeJavaScript('hello()');
+        }},
+        {role: 'close'},
+        {type: 'separator'},
+        {role: 'quit'}
+      ]
+    },
+    {role: 'editMenu'},
+
+
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  Menu.setApplicationMenu(menu);
+}
+
+
+
+
+リスト4-10
+function hello() {
+  alert('select menu ' + remote.getCurrentWindow().id);
+}
+
+
+
+
+リスト4-11
+<script>
+const BrowserWindow = window.remote.BrowserWindow;
+const Menu = window.remote.Menu;
+
+
+function doit() {
+  let win = remote.getCurrentWindow();
+  let menu_temp = [
+    {
+      label: 'New Menu',
+      submenu: [
+        {label: 'Hello', click: ()=>{
+          hello();
+        }},
+        {role: 'close'},
+        {type: 'separator'},
+        {role: 'quit'}
+      ]
+    }
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  Menu.setApplicationMenu(menu);
+  alert('change menubar.');
+}
+
+
+function hello() {
+  alert('select menu ' + remote.getCurrentWindow().id);
+}
+</script>
+
+
+
+
+リスト4-12
+{label: 'Hello', click: (m, w)=>{
+  w.webContents.executeJavaScript('hello()');
+}},
+
+
+
+
+リスト4-13
+<script>
+const BrowserWindow = window.remote.BrowserWindow;
+const Menu = window.remote.Menu;
+const MenuItem = window.remote.MenuItem;
+
+
+const menu = new Menu();
+menu.append(new MenuItem({
+  label: 'Hello', click(m, w) {
+    console.log('Hello menu.');
+    alert('Hello! [id=' + w.id + ']');
+  }
+}));
+menu.append(new MenuItem({ type: 'separator' }));
+menu.append(new MenuItem({role: 'cut'}));
+menu.append(new MenuItem({role: 'copy'}));
+menu.append(new MenuItem({role: 'paste'}));
+window.addEventListener('contextmenu', (e) => {
+  menu.popup({ window: remote.getCurrentWindow() })
+}, false);
+</script>
+
+
+
+
+リスト4-14
+<script>
+const BrowserWindow = window.remote.BrowserWindow;
+const Menu = window.remote.Menu;
+const MenuItem = window.remote.MenuItem;
+
+
+let menu_tmp = [
+  {
+    label: 'Hello', click(m, w) {
+      console.log('Hello menu.');
+      alert('Hello! [id=' + w.id + ']');
+    }
+  },
+  { type: 'separator' },
+  {role: 'cut'},
+  {role: 'copy'},
+  {role: 'paste'}
+];
+const menu = Menu.buildFromTemplate(menu_tmp);
+window.addEventListener('contextmenu', (e) => {
+  e.preventDefault();
+  menu.popup({ window: remote.getCurrentWindow() })
+}, false);
+</script>
+
+
+
+
+リスト4-15
+const { app, Menu, BrowserWindow } = require('electron');
+const path = require('path');
+const { ipcMain } = require('electron');
+
+
+const win_name = [
+  'banana', 'orange', 'apple'
+];
+
+
+ipcMain.on('hello', (event) => {
+  const result = createWindow();
+  event.reply('hello-result', win_name[result % 3] + '-' + result);
+});
+
+
+function createWindow () {
+  win = new BrowserWindow({
+    width: 400,
+    height: 300,
+    webPreferences: {
+      enableRemoteModule: true,
+      preload: path.join(app.getAppPath(), 'preload.js')
+    }
+  });
+  win.loadFile('index.html');
+  return win.id;
+}
+
+
+function createMenu() {……略……}
+
+
+createMenu();
+app.whenReady().then(createWindow);
+
+
+
+
+リスト4-16
+const { remote } = require('electron');
+const { ipcRenderer } = require('electron')
+
+
+window.remote = remote;
+window.ipcRenderer = ipcRenderer;
+
+
+
+
+リスト4-17
+<script>
+const BrowserWindow = window.remote.BrowserWindow;
+
+
+function doit() {
+  let w = remote.getCurrentWindow();
+  ipcRenderer.send('hello');
+  
+  ipcRenderer.on('hello-result', (result, arg)=>{
+    document.querySelector('#msg').textContent 
+      = 'create window ' + arg;
+  })
+}
+</script>
+
+
+
+
+リスト4-18
+{label: 'Hello', click: ()=>{
+  const w = BrowserWindow.getFocusedWindow();
+  w.webContents.send('hello', 'message from app.(' + ++counter + ' count)');
+}},
+
+
+
+
+リスト4-19
+ipcRenderer.on('hello', (event, msg)=> {
+  console.log('message hello from app. :' + msg);
+  document.querySelector('#msg').textContent = msg;
+});
+
+
+
+
+リスト4-20
+{label: 'Hello', click: ()=>{
+  const ws = BrowserWindow.getAllWindows();
+  let count = 1;
+  let dx = 100;
+  let dy = 100;
+  for (let n in ws) {
+    let w = ws[n];
+    w.setPosition(dx, dy);
+    w.webContents.send('hello', 'Window No, ' + count++);
+    dx += 150;
+    dy += 50;
+  }
+}},
+
+
+
+
+リスト4-21
+function doit() {
+  let w = remote.getCurrentWindow();
+  ipcRenderer.invoke('hello', w.id).then((result)=>{
+    document.querySelector('#msg').textContent = result;
+  })
+}
+
+
+
+
+リスト4-22
+ipcMain.handle('hello', (event, arg) => {
+  let ws = BrowserWindow.getAllWindows();
+  for(let n in ws) {
+    let w = ws[n];
+    if (w.id != arg) {
+      w.close();
+    }
+  }
+  return 'only open id= ' + arg;
+})
+
+
+
+
+リスト4-23
+const { remote } = require('electron');
+const { dialog } = remote;
+const { ipcRenderer } = require('electron');
+
+
+window.remote = remote;
+window.dialog = dialog;
+window.ipcRenderer = ipcRenderer;
+
+
+
+
+リスト4-24
+function doit() {
+  let w = remote.getCurrentWindow();
+  let re = dialog.showMessageBox(w, {
+    title:'Message',
+    message:'これがメッセージボックスの表示です。',
+    detail: 'OKすると閉じます。'
+  });
+  console.log(re);
+}
+
+
+
+
+リスト4-25
+function doit() {
+  let btns = ['OK','Cancel','わかりました。','よくわかんない……'];
+  let w = remote.getCurrentWindow();
+  let re = dialog.showMessageBoxSync(w, {
+    title:'Message',
+    message:'これがメッセージボックスの表示です。',
+    detail: 'OKすると閉じます。',
+    buttons:btns
+  });
+  alert('あなたは、「' + btns[re] + '」を選びました。');
+}
+
+
+
+
+リスト4-26
+function doit() {
+  let btns = ['OK','Cancel','わかりました。','よくわかんない……'];
+  let w = remote.getCurrentWindow();
+  dialog.showMessageBox(w, {
+    title:'Message',
+    message:'これがメッセージボックスの表示です。',
+    detail: 'OKすると閉じます。',
+    buttons:btns
+  }).then((event)=>{
+    alert('あなたは、「' + btns[event.response] + '」を選びました。');
+  });
+}
+
+
+
+
+リスト4-27
+function doit() {
+  let btns = ['OK','Cancel'];
+  let w = remote.getCurrentWindow();
+  dialog.showMessageBox(w, {
+    type:'info',
+    title:'Message',
+    message:'これがメッセージボックスの表示です。',
+    detail: 'OKすると閉じます。',
+    buttons:btns,
+    checkboxLabel:'チェック！'
+  }).then((event)=>{
+    let msg = 'あなたは、「' + btns[event.response] + '」を選びました。';
+    if (event.checkboxChecked){
+      alert(msg);
+    } else {
+      document.querySelector('#msg').textContent = msg;
+    }
+  });
+}
+
+
+
+
+リスト4-28
+function doit() {
+  let btns = ['正常です','問題があります'];
+  let w = remote.getCurrentWindow();
+  dialog.showMessageBox(w, {
+    type:'info',
+    title: 'Message',
+    message: 'アプリケーションの動作に問題はないですか。',
+    buttons:btns
+  }).then((event)=> {
+    if (event.response == 1) {
+      dialog.showErrorBox('Caution!',
+        '何か問題が発生しています。');
+    } else {
+      alert('了解しました。');
+    }
+  });
+ }
+
+
+
+
+リスト5-1
+const { app, Menu, BrowserWindow } = require('electron');
+const { ipcMain } = require('electron');
+const path = require('path');
+
+
+function createWindow () {
+  win = new BrowserWindow({
+    width: 600,
+    height: 400,
+    webPreferences: {
+      enableRemoteModule: true,
+      preload: path.join(app.getAppPath(), 'preload.js')
+    }
+  });
+  win.loadFile('index.html');
+  win.webContents.openDevTools();
+  return win.id;
+}
+
+
+function createMenu() {……略……}
+
+
+createMenu();
+app.whenReady().then(createWindow);
+
+
+
+
+リスト5-2
+const { remote } = require('electron');
+const { dialog } = remote;
+const { ipcRenderer } = require('electron');
+const fs = require('fs');
+
+
+window.remote = remote;
+window.dialog = dialog;
+window.ipcRenderer = ipcRenderer;
+window.fs = fs;
+
+
+
+
+リスト5-3
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <title>Sample App</title>
+</head>
+
+
+<body>
+  <nav class="navbar bg-primary mb-4">
+    <h1 class="display-4 text-light">Sample-app</h1>
+  </nav>
+  <div class="container">
+    <p id="msg">please click button.</p>
+    <p>
+      <textarea class="form-control" id="ta"></textarea>
+    </p>
+    <button class="btn btn-primary"onclick="doit()">
+      Click
+    </button>
+  </div>
+  <script>
+  function doit() {
+    // TODO
+  }
+  </script>
+</body>
+</html>
+
+
+
+
+リスト5-4
+function doit() {
+  let fname = 'sample.txt'
+  re = fs.readFileSync(fname).toString();
+  document.querySelector('#ta').value = re;
+  alert('テキストを読み込みました。');
+}
+
+
+
+
+リスト5-5
+function doit() {
+  let fname = 'sample.txt';
+  re = fs.readFile(fname, (err, result)=> {
+    if (err == null) {
+      let data = result.toString();
+      document.querySelector('#ta').value = data;
+      alert('テキストを読み込みました。');
+    } else {
+      dialog.showErrorBox(err.code + err.errno, err.message);
+    }
+  });
+}
+
+
+
+
+リスト5-6
+function doit() {
+  let w = remote.getCurrentWindow();
+  let result = dialog.showOpenDialogSync(w, {
+    properties: ['openFile'],
+    filters: [
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'All Files', extensions: ['*'] }
+    ]
+  });
+  if (result != undefined) {
+    var re = '';
+    let pth = result[0];
+    re = fs.readFileSync(pth).toString();
+  } else {
+    re = 'canceled'; 
+  }
+  document.querySelector('#ta').value = re;
+}
+
+
+
+
+リスト5-7
+function doit() {
+  let w = remote.getCurrentWindow();
+  dialog.showOpenDialog(w, {
+    properties: ['openFile'],
+    filters: [
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'All Files', extensions: ['*'] }
+    ]
+  }).then((result) => {
+    if (!result.canceled) {
+      var re = '';
+      let pth = result.filePaths[0];
+      re = fs.readFileSync(pth).toString();
+    } else {
+      re = 'canceled'; 
+    }
+    document.querySelector('#ta').value = re;
+  }).catch(err => {
+    dialog.showErrorBox(err.code + err.errno, err.message);
+  });
+}
+
+
+
+
+リスト5-8
+function doit() {
+  let data = document.querySelector('#ta').value;
+  fs.writeFileSync('saved.txt', data);
+  alert('保存しました。');
+}
+
+
+
+
+リスト5-9
+function doit() {
+  let data = document.querySelector('#ta').value;
+  fs.writeFile('saved.txt', data, (err)=>{
+    if (err == null) {
+      alert('保存しました。');
+    } else {
+      dialog.showErrorBox(err.code + err.errno, err.message);
+    }
+  });
+}
+
+
+
+
+リスト5-10
+function doit() {
+  let data = document.querySelector('#ta').value;
+  let w = remote.getCurrentWindow();
+  let fpath = dialog.showSaveDialogSync(w, {
+    title: '保存ダイアログ',
+    message:'ファイル名を入力'
+  });
+  if (fpath != null){
+    fs.writeFile(fpath + '.txt', data, (err)=>{
+      if (err == null) {
+        alert('保存しました。');
+      } else {
+        dialog.showErrorBox(err.code + err.errno, err.message);
+      }
+    });    
+  } else {
+    alert('キャンセルされました。');
+  }
+}
+
+
+
+
+リスト5-11
+function doit() {
+  let data = document.querySelector('#ta').value;
+  let w = remote.getCurrentWindow();
+  dialog.showSaveDialog(w, {
+    title: '保存ダイアログ',
+    message:'ファイル名を入力',
+  }).then((result)=> {
+    if (result.canceled) {
+      alert('キャンセルされました。');
+      return;
+    }
+    if (result.filePath != null){
+      fs.writeFile(result.filePath + '.txt', data, (err)=>{
+        if (err == null) {
+          alert('保存しました。');
+        } else {
+          dialog.showErrorBox(err.code + err.errno, err.message);
+        }
+      });    
+    } else {
+      alert('キャンセルされました。');
+    } 
+  });
+}
+
+
+
+
+リスト5-12
+const https = require('https');
+window.https = https;
+
+
+
+
+リスト5-13
+<script>
+function doit() {
+  let url = 'https://tuyano-api.firebaseio.com/covid.json'
+  let msg = document.querySelector('#msg');
+  https.get(url, (res)=> {
+    let data = '';
+    res.setEncoding('utf8');
+    res.on('data',(ck)=> {
+      data += ck;
+    });
+    res.on('end', (re)=> {
+      let json_obj = JSON.parse(data);
+      msg.innerHTML = jsonToTable(json_obj);
+    });
+  });
+}
+
+
+function jsonToTable(json) {
+  let table = '<table class="table"><thead><tr><th></th>';
+  for (let ky in json) {
+    let ob = json[ky];
+    for (let ky2 in ob) {
+      table += '<th>' + ky2 + '</th>';
+    }
+    break;
+  }
+  table += '</tr></thead><tbody>';
+  for (let ky in json) {
+    table += '<tr><td>' + ky + '</td>';
+    let ob = json[ky];
+    for (let ky2 in ob) {
+      table += '<td>' + ob[ky2] + '</td>';
+    }
+    table += '</tr>';
+  }
+  table += '</tbody></table>';
+  return table;
+}
+</script>
+
+
+
+
+リスト5-14
+const { net } = require('electron');
+
+
+ipcMain.on('get-json-data', (event, urldata)=>{
+  let data = '';
+  const request = net.request(urldata);
+  request.on('response', (response) => {
+    response.on('data', (ck)=> {
+      data += ck;
+    });
+    response.on('end', ()=> {
+      const w = BrowserWindow.getFocusedWindow();
+      w.webContents.send('get-json-data-result', data);
+    });
+  });
+  request.end();
+});
+
+
+
+
+リスト5-15
+function doit() {
+  let urldata = {
+    method: 'GET',
+    protocol: 'https:',
+    hostname: 'tuyano-api.firebaseio.com',
+    port: 443,
+    path: '/covid.json'
+  };
+  ipcRenderer.send('get-json-data', urldata);
+  
+  ipcRenderer.on('get-json-data-result', (result, data)=>{
+    let msg = document.querySelector('#msg');
+    let json_data = JSON.parse(data);
+    msg.innerHTML = jsonToTable(json_data);
+  });
+}
+
+
+function jsonToTable(json) {……略……}
+
+
+
+
+リスト5-16
+const Parser = require('rss-parser');
+window.Parser = Parser;
+
+
+
+
+リスト5-17
+function doit() {
+  let url = 'https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja'
+  let msg = document.querySelector('#msg');
+  let parser = new Parser();
+  let list = '<ul class="list-group">';
+  parser.parseURL(url, (err, feed)=> {
+    if (err == null) {
+      for (let n in feed.items) {
+        let item = feed.items[n];
+        list += '<li class="list-group-item">' 
+          + item.title + ' (' + item.pubDate + ')</li>';
+      }
+      list += '</ul>';
+      msg.innerHTML = list;
+    }
+  });
+}
+
+
+
+
+リスト5-18
+const path = require('path');
+window.path = path;
+
+
+const sqlite3 = require('sqlite3');
+window.sqlite3 = sqlite3;
+
+
+
+
+リスト5-19
+var dbpath = path.join(remote.app.getPath('home'), 'mydata.db');
+var db = new sqlite3.Database(dbpath); //★
+
+
+
+
+リスト5-20
+function doit() {
+  let db = new sqlite3.Database(dbpath);
+  db.serialize(()=> {
+    query = 'create table if not exists users'
+    + ' (id integer primary key autoincrement,'
+      + ' name text not null, mail text, tel text)';
+    db.run(query);
+    alert('create users table.');
+  });
+  db.close();
+}
+
+
+
+
+リスト5-21
+function addUser(data) {
+  return new Promise((resolve, reject)=> {
+    let db = new sqlite3.Database(dbpath);
+    db.serialize(()=> {
+      let query = 'insert into users (name,mail,tel) values '
+        + '("' + data[0] + '","' + data[1] + '","' + data[2] + '")';
+        db.exec(query, (stat, err)=> {
+          if (err == null) {
+            resolve('SUCCESS');
+          } else {
+            reject(err);
+          }
+        });
+    });
+    db.close();
+  });
+}
+
+
+
+
+リスト5-22
+function doit() {
+  let ta = document.querySelector('#ta');
+  let data = ta.value.split(',');
+  addUser(data).then((res)=> {
+    alert(res);
+    ta.value = '';
+  });
+}
+
+
+
+
+リスト5-23
+function findall() {
+  let query = 'select * from users';
+  return new Promise((resolve, reject)=> {
+    let db = new sqlite3.Database(dbpath);
+    db.all(query, (err, rows)=> {
+      if (err == null) {
+        resolve(rows);
+      } else {
+        reject(err);
+      }
+    });
+    db.close();
+  }).catch((err)=> {
+    alert(err.message);
+  })
+}
+
+
+
+
+リスト5-24
+makeTable();
+
+
+function makeTable() {
+  findall().then((res)=> {
+    let msg = document.querySelector('#msg');
+    msg.innerHTML = jsonToTable(res);
+  });
+}
+
+
+（※jsonToTable関数が必要です）
+
+
+
+
+リスト5-25
+function findUsers(fstr) {
+  let query = 'select * from users where ' + fstr;
+  return new Promise((resolve, reject)=> {
+    let db = new sqlite3.Database(dbpath);
+    db.all(query, (err, rows)=> {
+      if (err == null) {
+        resolve(rows);
+      } else {
+        reject(err);
+      }
+    });
+    db.close();
+  }).catch((err)=> {
+    alert(err.message);
+  })
+}
+
+
+
+
+リスト5-26
+function doit() {
+  let fstr = document.querySelector('#ta').value;
+  findUsers(fstr).then((res)=> {
+    let msg = document.querySelector('#msg');
+    msg.innerHTML = jsonToTable(res);
+  });
+}
+
+
+
+
+リスト6-1
+const { app, Menu, BrowserWindow } = require('electron');
+const path = require('path');
+
+
+function createWindow () {
+  win = new BrowserWindow({
+    width: 600,
+    height: 400,
+    webPreferences: {
+      enableRemoteModule: true,
+      preload: path.join(app.getAppPath(), 'preload.js')
+    }
+  });
+  win.loadFile('index.html');
+  return win.id;
+}
+
+
+function createMenu() {
+  let menu_temp = [
+    {
+      label: 'File',
+      submenu: [
+        {label: 'New', click: ()=>{
+          createWindow();
+        }},
+        {role: 'close'},
+        {type: 'separator'},
+        {role: 'quit'}
+      ]
+    },
+    {role: 'editMenu'},
+
+
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  Menu.setApplicationMenu(menu);
+}
+
+
+createMenu();
+app.whenReady().then(createWindow);
+
+
+
+
+リスト6-2
+<!DOCTYPE html>
+<html lang="ja">
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+
+<body>
+  <nav class="navbar bg-secondary" id="header">
+    <h1 class="h5 text-light">Sample-editors</h1>
+  </nav>
+  <div class="row m-0" id="content">
+    <div class="col-12 m-0" id="editor_area"></div>
+  </div>
+  <div class="row m-0" id="footer">* this is footer. *</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+  <script src="editor.js"></script>
+</body>
+
+
+</html>
+
+
+
+
+リスト6-3
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #303030;
+}
+
+
+#header {
+  position: fixed;
+  width: 100%;
+  height: 45px;
+}
+
+
+#content {
+  padding: 50px 0px 25px 0px;
+  width: 100%;
+  height: 100%;
+}
+
+
+#editor_content {
+  padding: 0px 0px 0px 0px;
+  width: 100%;
+  height: 100%;
+}
+
+
+#editor_area {
+  padding:0px;
+  width: 100%;
+  height: 100%;
+}
+
+
+#footer {
+  position: fixed;
+  height: 22px;
+  width: 100%;
+  bottom: 0px;
+  background-color: #505050;
+  color: #e0e0e0;
+  font-size: 90%;
+}
+
+
+
+
+リスト6-4
+const { remote } = require('electron');
+const { dialog, BrowserWindow } = remote;
+
+
+window.remote = remote;
+window.BrowserWindow = BrowserWindow;
+window.dialog = dialog;
+
+
+
+
+リスト6-5
+var editor = null;
+
+
+window.addEventListener('DOMContentLoaded', onLoad);
+
+
+function onLoad() {
+    editor = ace.edit('editor_area');
+    editor.focus();
+}
+
+
+
+
+リスト6-5
+function onLoad() {
+    editor_area = document.getElementById('editor_area');
+    footer_area = document.getElementById('footer');
+
+
+    editor = ace.edit('editor_area');
+    editor.setTheme('ace/theme/dracula');
+    editor.focus();
+}
+
+
+
+
+リスト6-6
+// createMenu関数を修正する
+function createMenu() {
+  let menu_temp = [
+    {
+      label: 'File',
+      submenu: [
+        {label: 'New', click: ()=>{
+          createWindow();
+        }},
+        {role: 'close'},
+        {type: 'separator'},
+        {role: 'quit'}
+      ]
+    },
+    {role: 'editMenu'},
+    {
+      label: 'Theme',
+      submenu: [
+        {label: 'textmate', 
+          click: ()=> setTheme('textmate') },
+        {label: 'chrome', 
+          click: ()=> setTheme('chrome') },
+        {label: 'github', 
+          click: ()=> setTheme('github') },
+        {label: 'dracula', 
+          click: ()=> setTheme('dracula') },
+        {label: 'twilight', 
+          click: ()=> setTheme('twilight') },
+          {label: 'pastel on dark ', 
+          click: ()=> setTheme('pastel_on_dark') }
+      ]
+    },
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  Menu.setApplicationMenu(menu);
+}
+
+
+// setTheme関数を追加する
+function setTheme(tname) {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('setTheme("' + tname + '")');
+}
+
+
+
+
+リスト6-7
+// onLoad関数を修正する
+function onLoad() {
+    editor = ace.edit('editor_area');
+    editor.setTheme('ace/theme/textmate');
+    editor.focus();
+}
+
+
+// setTheme関数を追加する
+function setTheme(tname) {
+  editor.setTheme('ace/theme/' + tname);
+}
+
+
+
+
+リスト6-8
+{
+  label: 'Mode',
+  submenu: [
+    {label: 'text', 
+      click: ()=> setMode('text') },
+    {label: 'javascript', 
+      click: ()=> setMode('javascript') },
+    {label: 'html', 
+      click: ()=> setMode('html') },
+    {label: 'python', 
+      click: ()=> setMode('python') },
+    {label: 'php', 
+      click: ()=> setMode('php') }
+  ]
+},
+
+
+
+
+リスト6-9
+function setMode(mname) {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('setMode("' + mname + '")');
+}
+
+
+
+
+リスト6-10
+function setMode(mname) {
+  editor.session.setMode('ace/mode/' + mname);
+}
+
+
+
+
+リスト6-11
+function onLoad() {
+    editor = ace.edit('editor_area');
+    editor.setTheme('ace/theme/textmate');
+    editor.session.setMode("ace/mode/text");
+    editor.focus();
+}
+
+
+
+
+リスト6-12
+{
+  label: 'Font',
+  submenu: [
+    {label: '9', 
+      click: ()=> setFontSize(9) },
+      {label: '10', 
+      click: ()=> setFontSize(10) },
+      {label: '12', 
+      click: ()=> setFontSize(12) },
+      {label: '14', 
+      click: ()=> setFontSize(14) },
+      {label: '16', 
+      click: ()=> setFontSize(16) },
+      {label: '18', 
+      click: ()=> setFontSize(18) },
+      {label: '20', 
+      click: ()=> setFontSize(20) },
+      {label: '24', 
+      click: ()=> setFontSize(24) },
+  ]
+},
+
+
+
+
+リスト6-13
+function setFontSize(n) {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('setFontSize(' + n + ')');
+}
+
+
+
+
+リスト6-14
+function setFontSize(n) {
+  editor.setFontSize(n);
+}
+
+
+
+
+リスト6-12
+<body>
+  <nav class="navbar bg-secondary" id="header">
+    <h1 class="h5 text-light">Sample-editors</h1>
+  </nav>
+  <div class="row m-0" id="content">
+    <div class="col-12 col-sm-4 col-md-3 col-lg-2 m-0" id="sidebar">*sidebar*</div>
+    <div class="col-12 col-sm-8 col-md-9 col-lg-10 m-0" id="editor_area"></div>
+  </div>
+  <div class="row m-0" id="footer">* this is footer. *</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
+  <script src="editor.js"></script>
+</body>
+
+
+
+
+リスト6-13
+#sidebar {
+  background-color: #505050;
+  color: #e0e0e0;
+}
+#sidebar li {
+  list-style: none;
+}
+
+
+
+
+リスト6-14
+{label: 'Open folder...', click: ()=>{
+  openfolder();
+}},
+
+
+
+
+リスト6-15
+function openfolder() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('openfolder()');
+}
+
+
+
+
+リスト6-16
+const fs = require('fs');
+window.fs = fs;
+const path = require('path');
+window.path = path;
+
+
+
+
+リスト6-17
+var editor = null;
+var folder_path = null; // 開いたフォルダのパス
+var folder_items = null; // フォルダ内のファイル
+var current_fname = null; // 開いたファイル名
+var sidebar = null;
+var footer = null;
+
+
+window.addEventListener('DOMContentLoaded', onLoad);
+
+
+function onLoad() {
+  footer = document.querySelector('#footer');
+  sidebar = document.querySelector('#sidebar');
+  editor = ace.edit('editor_area');
+  editor.setTheme('ace/theme/textmate');
+  setMode("text");
+  editor.focus();
+}
+
+
+
+
+リスト6-18
+function openfolder() {
+  let w = BrowserWindow.getFocusedWindow();
+  let result = dialog.showOpenDialogSync(w, {
+    properties: ['openDirectory']
+  });
+  if (result != undefined) {
+    folder_path = result[0];
+    loadPath(); // ☆
+    footer.textContent = 'open dir:"' + folder_path + '".';
+  }
+}
+
+
+
+
+リスト6-19
+function loadPath() {
+  fs.readdir(folder_path, (err, files)=> {
+    folder_items = files;
+    let tag = '<ul>';
+    for (const n in files) {
+      tag += '<li id="item ' + n + '" onclick="openfile(' 
+        + n + ')">' + files[n] + '</li>';
+    }
+    tag += '</ul>';
+    sidebar.innerHTML = tag;
+  });
+}
+
+
+
+
+リスト6-20
+function openfile(n) {
+  savefile();
+  current_fname = folder_items[n];
+  let fpath = path.join(folder_path, current_fname);
+  fs.readFile(fpath, (err, result)=> {
+    if (err == null) {
+      let data = result.toString();
+      editor.session.getDocument().setValue(data);
+      change_flg = false;
+      footer.textContent = ' "' + fpath +'" loaded.';
+      setExt(current_fname);
+    } else {
+      dialog.showErrorBox(err.code + err.errno, err.message);
+    }
+  });
+}
+
+
+
+
+リスト6-21
+function setExt(fname) {
+  let ext = path.extname(fname);
+  switch (ext) {
+    case '.txt':
+    setMode('text'); break;
+    case '.js':
+    setMode('javascript'); break;
+    case '.json':
+    setMode('javascript'); break;
+    case '.html':
+    setMode('html'); break;
+    case '.py':
+    setMode('python'); break;
+    case '.php':
+    setMode('php'); break;
+  }
+}
+
+
+
+
+リスト6-22
+var change_flg = false;
+
+
+function savefile() {
+  if (!change_flg) { return; }
+  let fpath = path.join(folder_path, current_fname);
+  let data = editor.session.getDocument().getValue();
+  fs.writeFile(fpath, data, (err)=> {
+    change_flg = false;
+  });
+}
+
+
+
+
+リスト6-23
+function onLoad() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.on('close', (e)=> {
+    savefile();
+  });
+  footer = document.querySelector('#footer');
+  sidebar = document.querySelector('#sidebar');
+  editor = ace.edit('editor_area');
+  editor.setTheme('ace/theme/textmate');
+  setMode("text");
+  editor.focus();
+  editor.session.getDocument().on('change', (ob)=> {
+    change_flg = true;
+  });
+}
+
+
+
+
+リスト6-24
+function openfile(n) {
+  savefile(); // ☆
+  current_fname = folder_items[n];
+  ……以下略……
+
+
+
+
+リスト6-25
+{label: 'Create file', click: ()=>{
+  createfile();
+}},
+
+
+
+
+リスト6-26
+function createfile() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('createfile()');
+}
+
+
+
+
+リスト6-27
+<div class="modal" tabindex="-1" role="dialog" id="save-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Save</h5>
+      </div>
+      <div class="modal-body">
+        <p>Save file name:</p>
+        <input type="text" class="form-control" id="input_file_name">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" 
+          data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" 
+            onclick="createfileresult()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト6-28
+function createfile() {
+  $('#save-modal').modal('show');
+}
+
+
+function createfileresult() {
+  current_fname = document.querySelector('#input_file_name').value;
+  let fpath = path.join(folder_path, current_fname);
+  fs.writeFile(fpath, '', (err)=> {
+    editor.session.getDocument().setValue('');
+    footer.textContent = '"' + current_fname + '" createed.';
+    change_flg = false;
+    loadPath();
+  });
+}
+
+
+
+
+リスト6-29
+sidebar.addEventListener(’dragover’, (event)=> {
+  event.preventDefault();
+  current_fname = null;
+  folder_path = null;
+  folder_items = null;
+});
+
+
+sidebar.addEventListener('drop', (event) => {
+  editor.session.getDocument().setValue('');
+  change_flg = false;
+  const folder = event.dataTransfer.files[0];
+  folder_path = folder.path;
+  loadPath();
+});
+
+
+
+
+リスト6-30
+{
+  label: 'Find',
+  submenu: [
+    {label: 'Find...', click: ()=>{
+      find();
+    }},
+    {label: 'Find Next', 
+      accelerator :'CommandOrControl+right', 
+      click: ()=>{
+        findnext();
+      }},
+    {label: 'Find Prev', 
+    accelerator :'CommandOrControl+left', 
+      click: ()=>{
+        findprev();
+      }},
+  ]
+},
+
+
+
+
+リスト6-31
+function find() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('find()');
+}
+
+
+function findnext() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('findnext()');
+}
+
+
+function findprev() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('findprev()');
+}
+
+
+
+
+リスト6-32
+<div class="modal fade" tabindex="-1" role="dialog" id="find-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Find</h5>
+      </div>
+      <div class="modal-body">
+        <p>find string:</p>
+        <input type="text" class="form-control" id="input_find">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" 
+          data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" 
+          data-dismiss="modal" onclick="search()">Find</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト6-33
+function find() {
+  $('#find-modal').modal('show');
+}
+
+
+function search() {
+  let fstr = document.querySelector('#input_find').value;
+  editor.focus();
+  editor.gotoLine(0);
+  editor.find(fstr, {
+    backwards: false,
+    wrap: false,
+    caseSensitive: false,
+    wholeWord: false,
+    regExp: false
+  });
+}
+
+
+function findnext() {
+  editor.findNext();
+}
+
+
+function findprev() {
+  editor.findPrevious();
+}
+
+
+
+
+リスト6-34
+{label: 'Replace...', click: ()=>{
+  replace();
+}},
+{label: 'Replace Next', 
+  accelerator :'CommandOrControl+r', 
+  click: ()=>{
+    replacenext();
+  }},
+{label: 'Replace All', 
+  click: ()=>{
+    replaceall();
+  }},
+
+
+
+
+リスト6-35
+function replace() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('replace()');
+}
+
+
+function replacenext() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('replacenext()');
+}
+
+
+function replaceall() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('replaceall()');
+}
+
+
+
+
+リスト6-36
+<div class="modal fade" tabindex="-1" role="dialog" id="replace-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Find</h5>
+      </div>
+      <div class="modal-body">
+        <p>find and replace string:</p>
+        <input type="text" class="form-control mb-2" id="input_find2">
+        <input type="text" class="form-control" id="input_replace">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" 
+          data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" 
+          onclick="replacenow()">Find</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+リスト6-37
+function replace() {
+  document.querySelector('#input_find2').value = '';
+  document.querySelector('#input_replace').value = '';
+  $('#replace-modal').modal('show');
+}
+
+
+function replacenow() {
+  let fstr = document.querySelector('#input_find2').value;
+  editor.focus();
+  editor.gotoLine(0);
+  editor.find(fstr, {
+    backwards: false,
+    wrap: false,
+    caseSensitive: false,
+    wholeWord: false,
+    regExp: false
+  });
+  replacenext();
+}
+
+
+function replacenext() {
+  let rstr = document.querySelector('#input_replace').value;
+  editor.replace(rstr, {
+    backwards: false,
+    wrap: false,
+    caseSensitive: false,
+    wholeWord: false,
+    regExp: false
+  });
+}
+
+
+
+
+リスト7-1
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+
+
+function createWindow () {
+  let win = new BrowserWindow({
+    width: 600,
+    height: 400,
+    webPreferences: {
+      enableRemoteModule: true,
+      preload: path.join(app.getAppPath(), 'preload.js')
+    }
+  });
+  win.loadFile('index.html');
+}
+
+
+app.whenReady().then(createWindow);
+
+
+
+
+リスト7-2
+const { remote } = require('electron');
+const { dialog, BrowserWindow } = remote;
+const { ipcRenderer } = require('electron');
+
+
+window.remote = remote;
+window.BrowserWindow = BrowserWindow;
+window.dialog = dialog;
+window.ipcRenderer = ipcRenderer;
+
+
+
+
+リスト7-3
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" 
+      content="width=device-width, initial-scale=1.0">
+    <title>Sample App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+
+
+    <script src="https://unpkg.com/react@16/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.production.min.js" crossorigin></script>  
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  
+    <script type="text/babel" src="index.js"></script>
+  </head>
+  <body>
+    <nav class="navbar bg-primary mb-4">
+      <h1 class="display-4 text-light">React-app</h1>
+    </nav>
+    <div class="container">  
+      <p>This is React component sample...</p>
+      <div id="root"></div>
+    </div>
+  </body>
+</html>
+
+
+
+
+リスト7-4
+let dom = document.querySelector('#root');
+
+
+ReactDOM.render(
+  <div className="card">
+    <div className="card-body">
+    <h1>Hello</h1>
+    <p>This is React application sample.</p>
+    </div>
+  </div>,
+  document.getElementById('root')
+);
+
+
+
+
+リスト7-5
+ReactDOM.render(
+  React.createElement(
+    'div', {className:'card'}, [
+      React.createElement(
+        'div', {className:'card-body'}, [
+          React.createElement(
+            'h1', {}, 'Hello!'
+          ),
+          React.createElement(
+            'p', {}, 'This is non-JSX sample!'
+          )
+        ]
+      )
+    ]
+  ),
+  document.getElementById('root')
+);
+
+
+
+
+リスト7-6
+  <body>
+    <div id="root"></div>
+  </body>
+
+
+
+
+リスト7-7
+'use strict'
+
+
+import { app, BrowserWindow } from 'electron'
+
+
+……中略……
+
+
+function createWindow () {
+  mainWindow = new BrowserWindow({
+    height: 563,
+    useContentSize: true,
+    width: 1000,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
+
+
+  mainWindow.loadURL(winURL)
+
+
+  mainWindow.on('closed', () => {
+    mainWindow = null
+  })
+}
+
+
+app.on('ready', createWindow)
+
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
+})
+
+
+app.on('activate', () => {
+  if (mainWindow === null) {
+    createWindow()
+  }
+})
+
+
+
+
+リスト7-8
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>electron-react</title>
+    <% if (htmlWebpackPlugin.options.nodeModules) { %>
+    <!-- Add `node_modules/` to global paths so `require` works properly in development -->
+    <script>
+      require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
+    </script>
+    <% } %>
+  </head>
+
+
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+
+
+
+リスト7-8
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>electron-react</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  </head>
+
+
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+
+
+
+
+リスト7-9
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import App from './App'
+
+
+ReactDOM.render(<App />, document.getElementById('root'))
+
+
+
+
+リスト7-10
+import React from 'react'
+import { hot } from 'react-hot-loader/root'
+import logo from './assets/logo.svg'
+import './App.css'
+import { remote } from 'electron'
+
+
+const App = () => {
+  ……必要なだけconstが並ぶ……
+
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+
+
+        ……表示する内容が並ぶ……
+
+
+        </div>
+      </header>
+    </div>
+  )
+}
+
+
+export default hot(App)
+
+
+
+
+リスト7-11
+import React from 'react'
+import { hot } from 'react-hot-loader/root'
+
+
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+        <nav className="navbar bg-primary mb-4">
+          <h1 className="display-4 text-light">Reactron-app</h1>
+        </nav>
+        <div className="container text-primary">
+          <h2>App Component</h2>
+          <p>これはAppクラスコンポーネントのサンプルです。</p>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+export default hot(App)
+
+
+
+
+リスト7-12
+import React from 'react'
+import { hot } from 'react-hot-loader/root'
+
+
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+        <nav className="navbar bg-primary mb-4">
+          <h1 className="display-4 text-light">Reactron-app</h1>
+        </nav>
+        <div className="container">
+          <h2>App Component</h2>
+          <p>これはAppクラスコンポーネントのサンプルです。</p>
+          <Content />
+        </div>
+      </div>
+    )
+  }
+}
+
+
+class Content extends React.Component {
+  render() {
+    return (
+      <div className="alert alert-primary">
+        <h2>Content Component</h2>
+        <p>これは、Contentクラスコンポーネントのサンプルです。</p>
+      </div>
+    )
+  }
+}
+
+
+export default hot(App)
+
+
+
+
+リスト7-13
+class Content extends React.Component {
+  constructor() {
+    super()
+    this.title = 'Hello, Component!'
+    this.message = 'This is Sample Component!'
+    this.classname = 'alert alert-warning'
+  }
+
+
+  render() {
+    return (
+      <div className={this.classname}>
+        <h2>{this.title}</h2>
+        <p>{this.message}</p>
+      </div>
+    )
+  }
+}
+
+
+
+
+リスト7-14
+class Content extends React.Component {
+  constructor(props) {
+    super(props)
+    this.flg = true
+    this.title = 'Hello, Component!'
+    this.state = {
+      classname: 'alert alert-warning',
+      message: 'This is Sample Component!'
+    }
+    setInterval(() => {
+      if (this.flg) {
+        this.setState(() => ({
+          classname: 'alert alert-light',
+          message: 'This is light alert sample.'
+        }))
+      } else {
+        this.setState(() => ({
+          classname: 'alert alert-warning',
+          message: 'これは、warningアラートです。'
+        }))
+      }
+      this.flg = !this.flg
+    }, 1000)
+  }
+
+
+  render() {
+    return (
+      <div className={this.state.classname}>
+        <h2>{this.title}</h2>
+        <p>{this.state.message}</p>
+      </div>
+    )
+  }
+}
+
+
+
+
+リスト7-15
+class Content extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      count: 0
+    }
+    this.doAction = this.doAction.bind(this)
+  }
+
+
+  doAction(e) {
+    this.setState(state => ({
+      count: state.count + 1
+    }))
+  }
+
+
+  render() {
+    return (
+      <div className="container">
+        <div className="alert alert-primary">
+          <h2>App Component {this.state.count}</h2>
+          <p>This is App-class component!!</p>
+          <button className="btn btn-primary" onClick={this.doAction}>click</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+
+
+リスト7-16
+class Content extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      flg: true
+    }
+    this.doAction = this.doAction.bind(this)
+  }
+
+
+  doAction(e) {
+    this.setState(state => ({
+      flg: !state.flg
+    }))
+  }
+
+
+  render() {
+    return (
+      <div className="container">
+        <div className="alert alert-primary">
+          <h2>Content Component {this.state.count}</h2>
+          <p>This is Content-class component!!</p>
+          {this.state.flg
+            ? <div className="alert bg-danger">
+              <h3>Sample Content</h3>
+              <p>This is Content-class component!!</p>
+            </div>
+            : <div className="alert bg-dark">
+              <h3 className="text-light">
+                This is Other Content
+              </h3>
+              <p className="text-light">
+                this is Other Content message!!
+              </p>
+            </div>
+          }
+          <button className="btn btn-primary mt-3" onClick={this.doAction}>click</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+
+
+リスト7-17
+class Content extends React.Component {
+  constructor(props) {
+    super(props)
+    this.fieldvalue = ''
+    this.state = {
+      data: []
+    }
+    this.doChange = this.doChange.bind(this)
+    this.doAction = this.doAction.bind(this)
+  }
+
+
+  doChange(e) {
+    this.fieldvalue = e.target.value
+  }
+
+
+  doAction(e) {
+    this.state.data.push(this.fieldvalue)
+    this.setState(state => ({
+      data: state.data
+    }))
+  }
+
+
+  render() {
+    return (
+      <div className="container">
+        <div className="alert alert-primary">
+          <h2>Content Component {this.state.count}</h2>
+          <p>This is Content-class component!!</p>
+          <ul className="list-group">
+            {this.state.data.map((val) => (
+              <li key="{val}" className="list-group-item">{val}</li>
+            ))}
+          </ul>
+          <hr />
+          <div className="row m-0">
+            <input type="text" className="form-control col-10"
+              onChange={this.doChange} />
+            <button className="btn btn-primary col-2"
+              onClick={this.doAction}>click</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+
+
+リスト7-18
+class Content extends React.Component {
+  constructor(props) {
+    super(props)
+    this.style = [
+      {
+        color: 'red',
+        backgroundColor: '#ffdddd',
+        padding: '5px',
+        borderStyle: 'solid',
+        borderWidth: '5px',
+        borderColor: '#990000'
+      },
+      {
+        color: '#ddddff',
+        backgroundColor: 'blue',
+        padding: '5px',
+        borderStyle: 'double',
+        borderWidth: '7px',
+        borderColor: '#eeeeff'
+      }
+    ]
+    this.state = {
+      style: this.style[0]
+    }
+    this.doChange = this.doChange.bind(this)
+  }
+
+
+  doChange(e) {
+    const n = e.target.selectedIndex
+    this.setState((state) => ({
+      style: this.style[n]
+    }))
+  }
+
+
+  render() {
+    return (
+      <div className="container">
+        <div className="alert alert-primary">
+          <h2 style={this.state.style}>Content Component {this.state.count}</h2>
+          <p style={this.state.style}>This is Content-class component!!</p>
+          <select className="form-control" onChange={this.doChange}>
+            <option>red</option>
+            <option>blue</option>
+          </select>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+
+
+リスト7-19
+import React from 'react'
+import { hot } from 'react-hot-loader/root'
+import { remote } from 'electron'
+import fs from 'fs'
+
+
+const dialog = remote.dialog
+
+
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+        <nav className="navbar bg-primary mb-4">
+          <h1 className="display-4 text-light">Reactron-app</h1>
+        </nav>
+        <div className="container">
+          <h2>App Component</h2>
+          <p>これはAppクラスコンポーネントのサンプルです。</p>
+          <Content />
+        </div>
+      </div>
+    )
+  }
+}
+
+
+class Content extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      message: 'this is sample message...'
+    }
+    this.doAction = this.doAction.bind(this)
+  }
+
+
+  doAction(e) {
+    const w = remote.getCurrentWindow()
+    const result = dialog.showOpenDialogSync(w, {
+      properties: ['openFile'],
+      filters: [
+        { name: 'Text Files', extensions: ['txt'] }
+      ]
+    })
+    let re = ''
+    let pth = ''
+    let msg = ''
+    if (result !== undefined) {
+      pth = result[0]
+      re = fs.readFileSync(pth).toString()
+      msg = '"' + pth + '" をロードしました。'
+      this.setState((state) => ({
+        message: re
+      }))
+    } else {
+      re = 'canceled'
+      msg = 'キャンセルされました。'
+    }
+    dialog.showMessageBox(w, {
+      title: 'Message',
+      message: msg
+    })
+  }
+
+
+  render() {
+    return (
+      <div className="container">
+        <div className="alert alert-primary">
+          <h2 >Content Component {this.state.count}</h2>
+          <textarea className="form-control"
+            rows="5" value={this.state.message}></textarea>
+          <button className="btn btn-primary mt-3"
+            onClick={this.doAction}>Click</button>
+        </div>
+      </div>
+    )
+  }
+}
+
+
+export default hot(App)
+
+
+
+
+リスト8-1
+const { app, Menu, BrowserWindow } = require('electron');
+
+
+function createWindow () {
+  win = new BrowserWindow({
+    width: 600,
+    height: 375,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true
+    }
+  });
+  win.loadFile('index.html');
+  //win.webContents.openDevTools(); // ☆
+  return win.id;
+}
+
+
+function createMenu() {
+  let menu_temp = [
+    {
+      label: 'Menu',
+      submenu: [
+        {label: 'doit', click: ()=>{
+          doit();
+        }},
+        {label: 'doDb', click: ()=>{
+          doDb();
+        }},
+        {type: 'separator'},
+        {role: 'quit'}
+      ]
+    },
+    {role: 'editMenu'},
+  ];
+  let menu = Menu.buildFromTemplate(menu_temp);
+  Menu.setApplicationMenu(menu);
+}
+
+
+function doit() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript('doit("Do-it!")');
+}
+
+
+function doDb() {
+  let w = BrowserWindow.getFocusedWindow();
+  w.webContents.executeJavaScript("doDb(1)");
+}
+
+
+createMenu();
+app.whenReady().then(createWindow);
+
+
+
+
+リスト8-2
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+  <title>Sample App</title>
+</head>
+
+
+<body>
+  <nav class="navbar bg-primary mb-4">
+    <h1 class="display-4 text-light">Sample-app</h1>
+  </nav>
+  <div class="container">
+    <p id="msg">please click button.</p>
+    <p>
+      <input type="text" class="form-control" id="fld"></textarea>
+    </p>
+    <button class="btn btn-primary" id="btn" onclick="action()">
+      Click
+    </button>
+  </div>
+  <script>
+  const { app, BrowserWindow } = require('electron').remote;
+  const sqlite3 = require('sqlite3');
+  const path = require('path');
+
+
+  function action() {
+    let txt = document.querySelector('#fld').value;
+    document.querySelector('#msg').textContent = txt;
+    return true;
+  }
+
+
+  function doit(msg) {
+    document.querySelector('#msg').textContent = msg;
+    return msg;
+  }
+
+
+  async function doDb(id) {
+    var dbpath = await path.join(app.getPath('home'), 'mydata.db');
+    let query = 'select * from users where id = ' + id;
+    let db = new sqlite3.Database(dbpath);
+    db.all(query, (err, rows)=> {
+      if (err == null) {
+        let jsn = JSON.stringify(rows[0]);
+        console.log(jsn);
+        doit(jsn);
+      } else {
+       console.log(err.message);
+      }
+    });
+    db.close();
+  }
+  </script>
+</body>
+</html>
+
+
+
+
+リスト8-3
+"scripts": {
+  "start": "electron .",
+  "test": "mocha"
+},
+
+
+
+
+リスト8-4
+const assert = require('assert');
+
+
+describe('Application launch', function() {
+  it('shows an initial window', ()=> {
+    const flg = true;
+    return assert(flg);
+  });
+});
+
+
+
+
+リスト8-5
+const { Application } = require('spectron');
+const assert = require('assert');
+const electronPath = require('electron');
+const path = require('path');
+
+
+describe('Application launch', function() {
+  
+  before(()=> {
+    this.app = new Application({
+      path: electronPath,
+      args: [path.join(__dirname, '..')]
+    });
+    return this.app.start();
+  })
+
+
+  after(()=> {
+    return this.app.stop();
+  });
+
+
+});
+
+
+
+
+リスト8-6
+const { Application } = require('spectron');
+const assert = require('assert');
+const electronPath = require('electron');
+const path = require('path');
+
+
+describe('Application launch', function() {
+  this.timeout(10000);
+
+
+  before(()=> {
+    this.app = new Application({
+      path: electronPath,
+      args: [path.join(__dirname, '..')]
+    });
+    return this.app.start();
+  })
+
+
+  after(()=> {
+    return this.app.stop();
+  });
+
+
+  it("test 1", ()=>{
+    return assert(true);
+  })
+
+
+  it("test 2", ()=>{
+    return assert(true);
+  })
+
+
+  it("test 3", ()=>{
+    return assert(true);
+  })
+});
+
+
+
+
+リスト8-7
+describe('Application launch', function() {
+  this.timeout(10000);
+
+
+  before(()=> {……略……})
+
+
+  after(()=> {……略……});
+
+
+  it('shows an initial window', ()=> {
+    return this.app.client.getWindowCount().then((count)=> {
+      assert.strictEqual(count, 1);
+    });
+  })
+
+
+  it('check window title', ()=> {
+    return this.app.client.getTitle().then((title)=> {
+      assert.strictEqual(title, 'Sample App');
+    });
+  });
+
+
+});
+
+
+
+
+リスト8-8
+if (process.env.NODE_ENV !== 'test') {
+  win.webContents.openDevTools();
+}
+
+
+
+
+リスト8-9
+it('call javascript function', ()=> {
+  return this.app.webContents.executeJavaScript('doit("ok")').then((res)=> {
+    assert.strictEqual(res, 'ok');
+  });
+});
+
+
+it('get DOM textContent', ()=> {
+  let scrpt = 'document.querySelector("#fld").value = "Hello!";'
+    + 'action();document.querySelector("#msg").textContent;';
+  return this.app.webContents.executeJavaScript(scrpt).then((res)=> {
+    assert.strictEqual(res, 'Hello!');
+  });
+});
+
+
+
+
+リスト8-10
+it('use form and check message', async ()=> {
+  let msg = await this.app.client.$('#msg');
+  let fld = await this.app.client.$('#fld');
+  let btn = await this.app.client.$('#btn');
+  await fld.setValue('Hello!');
+  await btn.click();
+  let re = await msg.getText();
+  return assert.strictEqual(re, 'Hello!');
+});
+
+
+
+
+リスト8-11
+// const sqlite3 = require('sqlite3'); 追記
+
+
+it("access SQLite3 database", async ()=> {
+  await this.app.client.waitUntilWindowLoaded();
+  await this.app.webContents.executeJavaScript('doDb(1)');
+  let msg = await this.app.client.$('#msg');
+  let re = await msg.getText();
+  return assert.strictEqual(re.startsWith('{"id":1,'), true);
+});
+
+
+it("access SQLite3 directory", ()=> {
+  const dbpath = 'mydata.db';
+  const id = 1;
+  const query = 'select * from users where id = ' + id;
+  let db = new sqlite3.Database(dbpath);
+  let flg = true;
+  db.all(query, (err, rows)=> {
+    if (err == null) {
+      if (rows[0] != undefined) {
+        let r0 = rows[0];
+        console.log(r0);
+        db.close();
+        return assert.strictEqual(r0.id, 1);
+      } else {
+        db.close();
+        return assert.fail('cannot get record!');
+      }
+    } else {
+      console.log(err.message);
+      db.close();
+      return assert.fail(err);
+    }
+  });
+});
+
+
+
+
+リスト8-12
+{
+  "name": "sample_app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "set NODE_ENV=test&&mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^10.1.1",
+    "electron-rebuild": "^2.0.1",
+    "mocha": "^8.1.3",
+    "spectron": "^12.0.0"
+  },
+  "dependencies": {
+    "rss-parser": "^3.9.0",
+    "sqlite3": "^5.0.0"
+  }
+}
+
+
+
+
+リスト8-13
+if (!app.isPackaged) {
+  if (process.env.NODE_ENV !== 'test') {
+    win.webContents.openDevTools();
+  }
+}
+
+
+
+
+リスト8-14
+"build": {
+  "productName": "Sample Electron for me",
+  "copyright": "Copyright © 2020 ${author} Software.",
+  "appId": "com.example.electron.SampleApp"
+}
+
+
+
+
+リスト8-15
+"build": {
+  "productName": "Sample Electron for me",
+  "copyright": "Copyright © 2020 ${author} Software.",
+  "appId": "com.example.electron.SampleApp",
+  "win": {
+    "icon": "build/icon.ico",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64",
+          "ia32"
+        ]
+      }
+    ]
+  }
+}
+
+
+
+
+リスト8-16
+"nsis": {
+  "installerIcon": "build/installericon.ico",
+  "oneClick": false,
+  "perMachine": false,
+  "allowElevation": true,
+  "allowToChangeInstallationDirectory": true,
+  "runAfterFinish": false
+}
+
+
+
+
+リスト8-17
+"appx": {
+  "applicationId": "com.example.electron.SampleApp",
+  "backgroundColor": "#400090",
+  "displayName": "Sample Application",
+  "identityName": "SampleApp",
+  "languages": "ja",
+  "showNameOnTiles": true
+}
+
+
+
+
+リスト8-18
+"build": {
+  "productName": "Sample Electron Application",
+  "copyright": "Copyright © 2020 ${author}",
+  "appId": "com.tuyano.SampleApp",
+  "mac": {
+    "icon": "build/icons/icon.icns"
+    "identity": " 配布用証明書の名前 ",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": [
+          "x64"
+        ]
+      }
+    ]
+  }
+}
+
+
+
+
+リスト8-19
+"dmg": {
+  "backgroundColor": "#990033",
+  "title": "Sample Application",
+  "contents": [
+    {
+      "x": 100,
+      "y": 200,
+      "type": "link",
+      "path": "/Applications"
+    },
+    {
+      "x": 300,
+      "y": 200,
+      "type": "file"
+    }
+  ],
+  "window": {
+    "x": 100,
+    "y": 100,
+    "width": 600,
+    "height": 400
+  }
+}
+
+
+
+
+リスト8-20
+const builder = require("electron-builder");
+const Platform = builder.Platform;
+
+
+builder.build({
+  targets: Platform.WINDOWS.createTarget(),
+  config: {
+    "productName": "Sample Electron!",
+    "copyright": "Copyright © 2020 Tuyano project.",
+    "appId": "com.example.electron.SampleApp",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "runAfterFinish": false
+    }    
+  }
+})
+.then(() => {
+  console.log('\n***** Build-process is finished *****\n');
+})
+.catch((error) => {
+  console.log(error.message);
+});

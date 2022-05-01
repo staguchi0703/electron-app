@@ -1,50 +1,54 @@
-<h1 onContextMenu="contextMenu(event)">hello world</h1>
+<!DOCTYPE html>
+<html lang="ja">
 
-<button id="btn" onclick="add_line()">
-ボタン2
-</button>
-
-<button id="btn3" onclick="doit()">
-    ボタン3
-</button>
-
-<button id="btn4" onclick="playwavfile()">
-    ボタン44
-</button>
-    
-
-<p id="msg">hello world</p>
-
-<script>
-function add_line(){
-    window.myTestApi.send_msg()
-}
-
-function doit() {
-    console.log("empty func.")
-}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <title>Sample App</title>
+</head>
 
 
-function contextMenu(event) {
-    console.log("contextMenu event", event); //for debug
-    window.myTestApi.popupMenu(event);
-};
+<body>
+    <nav class="navbar bg-primary mb-4">
+        <h1 class="display-4 text-light">Sample-app</h1>
+    </nav>
+    <div class="container">
+        <p id="msg">please click button.</p>
+        <button class="btn btn-primary" onclick="doit()">
+            Click
+        </button>
+        <p id="msg_web">please click button for web.</p>
+        <button class="btn btn-secondary" onclick="openweb()">
+            Click now
+        </button>
+    </div>
+    <div>
+            <p id="msg_any"> any message </p>
+    </div>
 
-window.myTestApi.on("popup-return", (event) => {
-        alert("右クリックからのアラート");
-    });
 
-function playwavfile() {
-    window.myTestApi.playWavFile().then((result) => {
-        console.log(result);
-        alert(result)
-    })
-    
-}
+    <script>
+
+        function doit() {
+            ipcRenderer.send('hello');
+
+            window.myTestApi.on('hello-result', (result, arg) => {
+                document.querySelector('#msg').textContent = 'Create window ' + arg
+            })
+        }
+
+        function openweb(){
+            window.open("https://www.google.com/");
+            document.querySelector('#msg_web').textContent
+                = 'Create new WEB window!';
+        }
+    </script>
 
 
+</body>
 
-window.myTestApi.subZmq().then((result) =>
-    console.log(result)
-)
-</script>
+</html>

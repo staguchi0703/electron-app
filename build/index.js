@@ -1,101 +1,64 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
-const { app, BrowserWindow, Menu, MenuItem, ipcMain, dialog } = require('electron');
-const path = require('path');
-function createWindow(renderer_process) {
-    let win = new BrowserWindow({
+Object.defineProperty(exports, "__esModule", { value: true });
+const electron_1 = require("electron");
+const path = __importStar(require("path"));
+const win_name = [
+    "banana", "orange", "apple"
+];
+electron_1.ipcMain.on("hello", (event) => {
+    console.log("get message.");
+    const result = createWindow();
+    console.log("result is " + String(result));
+    event.reply('hello-result', win_name[result % 3] + '-' + result);
+});
+function createWindow() {
+    let win = new electron_1.BrowserWindow({
         width: 1200,
         height: 600,
-        backgroundColor: '#EEEEEE',
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js')
-            //nodeIntegrationとremoteモジュールの仕様が禁止された
+            preload: path.join(electron_1.app.getAppPath(), './build/preload.js')
         }
     });
-    win.loadFile(renderer_process);
+    win.loadFile('./renderer/index.html');
     win.webContents.openDevTools();
+    return win.id;
 }
 function createMenu() {
-    let menu_temp = [
-        {
-            label: 'custom',
-            submenu: [
-                {
-                    label: 'open new window',
-                    click: () => {
-                        console.log('New menu.');
-                        app.whenReady().then(createWindow.bind(null, './renderer/newWindow.html'));
-                    }
-                },
-                { role: 'close' },
-                { type: 'separator' },
-                { role: 'quit' }
-            ]
-        },
-        {
-            label: 'debug',
-            submenu: [
-                { role: 'toggleDevTools' },
-                { type: 'separator' },
-                { role: 'forceReload' },
-                { role: 'editMenu' },
-                { role: 'togglefullscreen' },
-            ]
-        }
-    ];
-    let menu = Menu.buildFromTemplate(menu_temp);
-    Menu.setApplicationMenu(menu);
-}
-function contextMenuMain() {
-    ipcMain.handle("popupMenu", (event) => {
-        const menu = new Menu();
-        menu.append(new MenuItem({
-            label: 'do func',
-            click: () => {
-                const w = BrowserWindow.getFocusedWindow();
-                w.webContents.send("popup-return");
-            }
-        }));
-        menu.popup({ window: BrowserWindow.getFocusedWindow() });
+    const menu_temp = [];
+    menu_temp.push({
+        label: 'undo',
+        accelerator: 'commandOrControl+Z',
+        role: 'undo'
     });
+    let menu = electron_1.Menu.buildFromTemplate(menu_temp);
+    electron_1.Menu.setApplicationMenu(menu);
 }
-function playWavFile() {
-    ipcMain.handle("playWavFile", (event) => __awaiter(this, void 0, void 0, function* () {
-        const w = BrowserWindow.getFocusedWindow();
-        let waveFilePath = dialog.showOpenDialogSync(w, {
-            properties: ['openFile'],
-            filters: [
-                {
-                    name: 'Wav file',
-                    extensions: ['wav']
-                }
-            ],
-            defaultPath: "./"
-        });
-        if (waveFilePath != undefined) {
-            console.log(waveFilePath[0]);
-            return waveFilePath[0];
-        }
-        else {
-            return "undefined";
-        }
-    }));
-}
-playWavFile();
-contextMenuMain();
 createMenu();
-app.whenReady().then(createWindow.bind(null, './renderer/index.html'));
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+electron_1.ipcMain.handle("createWindow", (event) => {
+    createWindow();
 });
-//# sourceMappingURL=index.js.map
+electron_1.app.whenReady().then(createWindow);
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9zcmMvaW5kZXgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUFBLHVDQUErRTtBQUMvRSwyQ0FBNkI7QUFHN0IsTUFBTSxRQUFRLEdBQUc7SUFDYixRQUFRLEVBQUUsUUFBUSxFQUFFLE9BQU87Q0FDOUIsQ0FBQztBQUVGLGtCQUFPLENBQUMsRUFBRSxDQUFDLE9BQU8sRUFBRSxDQUFDLEtBQTRCLEVBQUUsRUFBRTtJQUNqRCxPQUFPLENBQUMsR0FBRyxDQUFDLGNBQWMsQ0FBQyxDQUFBO0lBQzNCLE1BQU0sTUFBTSxHQUFHLFlBQVksRUFBRSxDQUFDO0lBQzlCLE9BQU8sQ0FBQyxHQUFHLENBQUMsWUFBWSxHQUFHLE1BQU0sQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDO0lBQzNDLEtBQUssQ0FBQyxLQUFLLENBQUMsY0FBYyxFQUFFLFFBQVEsQ0FBQyxNQUFNLEdBQUcsQ0FBQyxDQUFDLEdBQUcsR0FBRyxHQUFHLE1BQU0sQ0FBQyxDQUFBO0FBQ3BFLENBQUMsQ0FBQyxDQUFDO0FBR0gsU0FBUyxZQUFZO0lBQ2pCLElBQUksR0FBRyxHQUFHLElBQUksd0JBQWEsQ0FBQztRQUN4QixLQUFLLEVBQUUsSUFBSTtRQUNYLE1BQU0sRUFBRSxHQUFHO1FBQ1gsY0FBYyxFQUFFO1lBQ1osT0FBTyxFQUFFLElBQUksQ0FBQyxJQUFJLENBQUMsY0FBRyxDQUFDLFVBQVUsRUFBRSxFQUFFLG9CQUFvQixDQUFDO1NBQzdEO0tBQ0osQ0FBQyxDQUFDO0lBRUgsR0FBRyxDQUFDLFFBQVEsQ0FBQyx1QkFBdUIsQ0FBQyxDQUFBO0lBQ3JDLEdBQUcsQ0FBQyxXQUFXLENBQUMsWUFBWSxFQUFFLENBQUE7SUFDOUIsT0FBTyxHQUFHLENBQUMsRUFBRSxDQUFBO0FBQ2pCLENBQUM7QUFFRCxTQUFTLFVBQVU7SUFFZixNQUFNLFNBQVMsR0FBMEMsRUFBRSxDQUFDO0lBQzVELFNBQVMsQ0FBQyxJQUFJLENBQUM7UUFDWCxLQUFLLEVBQUUsTUFBTTtRQUNiLFdBQVcsRUFBRSxvQkFBb0I7UUFDakMsSUFBSSxFQUFFLE1BQU07S0FDZixDQUFDLENBQUM7SUFDSCxJQUFJLElBQUksR0FBRyxlQUFJLENBQUMsaUJBQWlCLENBQUMsU0FBUyxDQUFDLENBQUM7SUFDN0MsZUFBSSxDQUFDLGtCQUFrQixDQUFDLElBQUksQ0FBQyxDQUFDO0FBQ2xDLENBQUM7QUFFRCxVQUFVLEVBQUUsQ0FBQztBQUViLGtCQUFPLENBQUMsTUFBTSxDQUFDLGNBQWMsRUFBRSxDQUFDLEtBQUssRUFBRSxFQUFFO0lBQ3JDLFlBQVksRUFBRSxDQUFDO0FBQ25CLENBQUMsQ0FBQyxDQUFBO0FBQ0YsY0FBRyxDQUFDLFNBQVMsRUFBRSxDQUFDLElBQUksQ0FBQyxZQUFZLENBQUMsQ0FBQyJ9
