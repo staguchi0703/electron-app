@@ -1,5 +1,4 @@
-import { time } from 'console';
-import { ipcRenderer, contextBridge } from 'electron';
+import { ipcRenderer, contextBridge, dialog } from 'electron';
 
 contextBridge.exposeInMainWorld(
     "myTestApi", {
@@ -8,11 +7,10 @@ contextBridge.exposeInMainWorld(
             elm.textContent = "createWindw";
         }),
         send:ipcRenderer.send,
+        showMessage: ipcRenderer.invoke("showDialog"),
         // メイン → レンダラー
         on: (channel: any, callback: any) =>
             ipcRenderer.on(channel, (event: any, argv: any) => callback(event, argv))
     }
 
 );
-
-const _now = time();

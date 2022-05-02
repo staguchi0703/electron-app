@@ -15,7 +15,7 @@ ipcMain.on("hello", (event: Electron.IpcMainEvent) => {
 
 
 function createWindow() {
-    let win = new BrowserWindow({
+    let w = new BrowserWindow({
         width: 1200,
         height: 600,
         webPreferences: {
@@ -23,9 +23,11 @@ function createWindow() {
         }
     });
 
-    win.loadFile('./renderer/index.html')
-    win.webContents.openDevTools()
-    return win.id
+    w.loadFile('./renderer/index.html')
+    w.webContents.openDevTools();
+
+    dialog.showErrorBox("Caution", "you clone the main window.")
+    return w.id
 }
 
 function createMenu() {
@@ -45,9 +47,47 @@ function createMenu() {
             w?.webContents.send("hello", "message from app.(" + ++counter + " count)")
         }
     })
+
+    menu_temp.push({
+        label: "New Menu",
+        submenu: [
+            {
+                label: "New",
+                click: () => {
+                    console.log("new menu.")
+                    createWindow();
+                }
+            },
+            {role: "close"},
+            {type: "separator"},
+            {role: "quit"}
+        ]
+    })
+
     let menu = Menu.buildFromTemplate(menu_temp);
     Menu.setApplicationMenu(menu);
 }
+
+
+function showDialog() {
+    let w = BrowserWindow.getFocusedWindow()!;
+    let btns = ["aaa", "bbbb", "ccccc"]
+    let re = dialog.showMessageBoxSync(w, {
+        title: "sample title",
+        message:"sample message",
+        detail: "tttttttt",
+        buttons: btns
+    });
+    dialog.showMessageBox(w, {
+        title: "sample title",
+        message:"sample message",
+        detail: btns[re],
+    })
+}
+
+ipcMain.handle("showDialog", (event) => {
+    showDialog();
+})
 
 createMenu();
 

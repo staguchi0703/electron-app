@@ -27,7 +27,7 @@
         </button>
     </div>
     <div>
-            <p id="msg_any"> any message </p>
+        <p id="msg_any"> any message </p>
     </div>
 
 
@@ -39,16 +39,18 @@
             })
         }
 
-        function openweb(){
+        function openweb() {
             window.open("https://www.google.com/");
             document.querySelector('#msg_web').textContent
                 = 'Create new WEB window!';
+            alert("open new window")
         }
 
         window.myTestApi.on("hello", (event, msg) => {
             console.log("message hello from app. :" + msg);
             document.querySelector("#msg").textContent = msg;
         })
+
     </script>
 
 

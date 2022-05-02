@@ -59,7 +59,7 @@
 
   * 方法
     * send, on
-    * invoke, hadle
+    * invoke, handle
 
 ### preload
 
