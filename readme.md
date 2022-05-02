@@ -57,6 +57,9 @@
         w?.webContents.send("hello", "message from app.")
       ```
 
+  * 方法
+    * send, on
+    * invoke, hadle
 
 ### preload
 
