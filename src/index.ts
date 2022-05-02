@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu, MenuItem, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, Menu, ipcMain, dialog} from 'electron';
 import * as path from 'path';
 
 
@@ -14,6 +14,19 @@ ipcMain.on("hello", (event: Electron.IpcMainEvent) => {
 });
 
 
+ipcMain.on("getFilePath", (event: Electron.IpcMainEvent) => {
+    const w = BrowserWindow.getFocusedWindow()!;
+    const filename = dialog.showOpenDialogSync(w, {
+        properties: ['openFile'],
+        filters: [
+            {name: 'Text Files', extensions: ['txt', 'text', 'log']}
+        ]
+    })
+    event.reply("res-filePath", String(filename))
+
+})
+
+
 function createWindow() {
     let w = new BrowserWindow({
         width: 1200,
@@ -25,8 +38,6 @@ function createWindow() {
 
     w.loadFile('./renderer/index.html')
     w.webContents.openDevTools();
-
-    dialog.showErrorBox("Caution", "you clone the main window.")
     return w.id
 }
 
@@ -69,25 +80,8 @@ function createMenu() {
 }
 
 
-function showDialog() {
-    let w = BrowserWindow.getFocusedWindow()!;
-    let btns = ["aaa", "bbbb", "ccccc"]
-    let re = dialog.showMessageBoxSync(w, {
-        title: "sample title",
-        message:"sample message",
-        detail: "tttttttt",
-        buttons: btns
-    });
-    dialog.showMessageBox(w, {
-        title: "sample title",
-        message:"sample message",
-        detail: btns[re],
-    })
-}
 
-ipcMain.handle("showDialog", (event) => {
-    showDialog();
-})
+
 
 createMenu();
 

@@ -18,42 +18,14 @@
     </nav>
     <div class="container">
         <p id="msg">please click button.</p>
+        <p>
+            <textarea class="form-control" id="ta"></textarea>
+        </p>
         <button class="btn btn-primary" onclick="doit()">
             Click
         </button>
-        <p id="msg_web">please click button for web.</p>
-        <button class="btn btn-secondary" onclick="openweb()">
-            Click now
-        </button>
     </div>
-    <div>
-        <p id="msg_any"> any message </p>
-    </div>
-
-
-    <script>
-        function doit() {
-            window.myTestApi.send('hello');
-            window.myTestApi.on('hello-result', (result, arg) => {
-                document.querySelector('#msg').textContent = 'Create window ' + arg
-            })
-        }
-
-        function openweb() {
-            window.open("https://www.google.com/");
-            document.querySelector('#msg_web').textContent
-                = 'Create new WEB window!';
-            alert("open new window")
-        }
-
-        window.myTestApi.on("hello", (event, msg) => {
-            console.log("message hello from app. :" + msg);
-            document.querySelector("#msg").textContent = msg;
-        })
-
-    </script>
-
-
+    <script src="../build/renderer.js"></script>
 </body>
 
 </html>
