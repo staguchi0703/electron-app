@@ -7,7 +7,7 @@ contextBridge.exposeInMainWorld(
             let elm = document.querySelector("#msg_any")!
             elm.textContent = "createWindw";
         }),
-        ipcRenderer:ipcRenderer,
+        send:ipcRenderer.send,
         // メイン → レンダラー
         on: (channel: any, callback: any) =>
             ipcRenderer.on(channel, (event: any, argv: any) => callback(event, argv))

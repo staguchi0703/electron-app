@@ -36,13 +36,19 @@ function createMenu() {
         accelerator: 'commandOrControl+Z',
         role: 'undo' 
     });
+
+    let counter = 0;
+    menu_temp.push({
+        "label": "hello",
+        click: () => {
+            const w = BrowserWindow.getFocusedWindow();
+            w?.webContents.send("hello", "message from app.(" + ++counter + " count)")
+        }
+    })
     let menu = Menu.buildFromTemplate(menu_temp);
     Menu.setApplicationMenu(menu);
 }
 
 createMenu();
 
-ipcMain.handle("createWindow", (event) => {
-    createWindow();
-})
 app.whenReady().then(createWindow);

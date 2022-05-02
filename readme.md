@@ -33,12 +33,29 @@
     })
     ```
 
-  * menueバーの設定
-    * 弄るならメインプロセス側で定義する
-      * ipcでrenderer側からトリガをかけて実行するしかない。
-        * ipcRenderer -> ipcMain.handle()を使う
-  * コンテキストメニューの設定
-    * 
+
+  * main processの結果をレンダラーに返す
+    * ipcMain.onを使う
+    * ipcMainがメッセージ（第一引数）を受け取ったら、eventを受け取る
+    * event.replyで返答する
+      * 第一引数はメッセージ名、以下が値
+
+    ```ts
+      ipcMain.on("hello", (event: Electron.IpcMainEvent) => {
+        console.log("get message.")
+        const result = createWindow();
+        console.log("result is " + String(result));
+        event.reply('hello-result', win_name[result % 3] + '-' + result)
+      });
+    ```
+
+  * rendererに値を送る
+    * ipcMainで`BrowserWindow.getFocusedWindow()`を取得し、`webContents.send()`を送る
+
+      ```ts 
+        const w = BrowserWindow.getFocusedWindow();
+        w?.webContents.send("hello", "message from app.")
+      ```
 
 
 ### preload

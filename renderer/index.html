@@ -32,10 +32,8 @@
 
 
     <script>
-
         function doit() {
-            ipcRenderer.send('hello');
-
+            window.myTestApi.send('hello');
             window.myTestApi.on('hello-result', (result, arg) => {
                 document.querySelector('#msg').textContent = 'Create window ' + arg
             })
@@ -46,6 +44,11 @@
             document.querySelector('#msg_web').textContent
                 = 'Create new WEB window!';
         }
+
+        window.myTestApi.on("hello", (event, msg) => {
+            console.log("message hello from app. :" + msg);
+            document.querySelector("#msg").textContent = msg;
+        })
     </script>
 
 
