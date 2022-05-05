@@ -70,6 +70,7 @@
   * rendererでは`window.モジュールセット名称.属性名`で呼び出せる
 * 関数を定義しておけばrendererでそのまま使える
   * コードのボリュームが多いときときはモジュール呼び出しだけにして、処理系は別スクリプトを書いた方がよさそう
+* preloadでGUIのDOMに対して操作する場合は、rendererの引数にhtml要素を渡しpreload側で処理する。
 
 
 ### renderer process
