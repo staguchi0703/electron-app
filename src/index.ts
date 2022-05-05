@@ -3,29 +3,54 @@ import * as path from 'path';
 import Parser from 'rss-parser';
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
+import { resolve } from 'path';
 
 
-open({
-    filename: './database/database.db',
-    driver: sqlite3.Database
-  }).then((db) => {
-    const query = `
-            create table if not exists users_tbl
-            (
-                id integer primary key autoincrement,
-                name text not null,
-                mail text,
-                tel text
-            )
-    `
-    db.run(query);
-    dialog.showMessageBox({
-        message: "create users table"
+// open({
+//     filename: './database/database.db',
+//     driver: sqlite3.Database
+//   }).then((db) => {
+//     const query = `
+//             create table if not exists users_tbl
+//             (
+//                 id integer primary key autoincrement,
+//                 name text not null,
+//                 mail text,
+//                 tel text
+//             )
+//     `
+//     db.run(query);
+//     dialog.showMessageBox({
+//         message: "create users table"
+//     })
+//     db.close();
+
+// })
+
+
+function doQuery(query: string) {
+    return new Promise((resolve, reject) => {
+        
+        open({
+            filename: './database/database.db',
+            driver: sqlite3.Database
+          }).then((db) => {
+            db.run(query);
+            dialog.showMessageBox({
+                message: "query done."
+            })
+            db.close();
+        })
     })
-    db.close();
+};
+
+ipcMain.on("doQuery", (event, query) => {
+   let res = doQuery(query);
+   console.log(res);
+   const w = BrowserWindow.getFocusedWindow();
+   w?.webContents.send("doQuery-result", res);
 
 })
-
 
 
 const win_name = [

@@ -5,6 +5,7 @@ function getSampleTxtPath() {
     ipcRenderer.send("getFilePath");
 }
 
+
 function showRSS(url:string, elm:Element){
     ipcRenderer.send("getRSS", url);
     ipcRenderer.on("getRSS-result", (event, data) => {
@@ -50,9 +51,14 @@ function jsonToTable(json:any): string {
     return table;
 }
 
+function doQuery(query: string) {
+    ipcRenderer.send("doQuery", query)
+}
+
 
 contextBridge.exposeInMainWorld(
     "myTestApi", {
+        doQuery: doQuery,
         showRSS: showRSS,
         getCOVIDData: getCOVIDData,
         createWindow: async() => ipcRenderer.invoke("createWindow").then(()=>{

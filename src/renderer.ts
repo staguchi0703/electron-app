@@ -1,9 +1,10 @@
 function doit() {
-    let url = "https://news.google.com/rss?hl=ja&gl=JP&ceid=JP:ja";
-    let elm_msg:Element = document.querySelector('#msg')!;
-
+    let query = `
+    insert into users_tbl (name, mail, tel) values
+    ("tom", "tom@email", "0123");
+    `
     // @ts-expect-error
-    window.myTestApi.showRSS(url, elm_msg);
+    window.myTestApi.doQuery(query);
 }
 
 
