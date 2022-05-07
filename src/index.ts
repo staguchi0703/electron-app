@@ -3,7 +3,6 @@ import * as path from 'path';
 import Parser from 'rss-parser';
 import sqlite3 from 'sqlite3'
 import { open } from 'sqlite'
-import { resolve } from 'path';
 
 
 // open({
@@ -35,20 +34,23 @@ function doQuery(query: string) {
             filename: './database/database.db',
             driver: sqlite3.Database
           }).then((db) => {
-            db.run(query);
+            let res = db.exec(query);
             dialog.showMessageBox({
                 message: "query done."
-            })
+            });
+            resolve(res);
             db.close();
         })
     })
 };
 
 ipcMain.on("doQuery", (event, query) => {
-   let res = doQuery(query);
-   console.log(res);
-   const w = BrowserWindow.getFocusedWindow();
-   w?.webContents.send("doQuery-result", res);
+   doQuery(query).then((res) => {
+        console.log(res);       
+        const w = BrowserWindow.getFocusedWindow();
+        w?.webContents.send("doQuery-result", res);
+   });
+
 
 })
 
